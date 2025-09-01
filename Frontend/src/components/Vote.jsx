@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-const API_URL = 'http://localhost:5000/api/vote';
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/vote`;
 
-export default function Vote({ userEmail }) {
+export default function Vote({ userEmail, token }) {
   const [positions, setPositions] = useState([]);
   const [candidates, setCandidates] = useState([]);
   const [votes, setVotes] = useState({});
@@ -29,8 +29,8 @@ export default function Vote({ userEmail }) {
     try {
       const res = await fetch(`${API_URL}/submit`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail, votes: voteArr })
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ votes: voteArr })
       });
       const data = await res.json();
       if (res.ok) {

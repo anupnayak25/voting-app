@@ -9,12 +9,11 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
-  "dependencies": {
-    "multer": "^2.0.2",
-    "react": "^19.1.1",
-  "react-dom": "^19.1.1",
-  "react-router-dom": "^6.26.2"
-  },
+    "dependencies": {
+      "react": "^19.1.1",
+      "react-dom": "^19.1.1",
+      "react-router-dom": "^6.26.2"
+    },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
     "@types/react": "^19.1.10",

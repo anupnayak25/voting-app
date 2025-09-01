@@ -1,78 +1,113 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const API_URL = 'http://localhost:5000/api/candidate';
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/candidate`;
+const POSITION_API = `${import.meta.env.VITE_API_BASE_URL}/position`;
 
 export default function CandidateRegister() {
   const [form, setForm] = useState({ name: '', usn: '', email: '', position: '', gender: '' });
   const [photo, setPhoto] = useState(null);
   const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [positions, setPositions] = useState([]);
+
+  useEffect(() => {
+    fetchPositions();
+  }, []);
+
+  const fetchPositions = async () => {
+    try {
+      const response = await fetch(`${POSITION_API}`);
+      const data = await response.json();
+      setPositions(data.positions);
+    } catch (error) {
+      console.error('Error fetching positions:', error);
+      setMessage('Error loading positions');
+    }
+  };
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!form.position) return setMessage('Please select a position');
     setMessage('');
+    setSubmitting(true);
     try {
       const fd = new FormData();
-      fd.append('name', form.name);
-      fd.append('usn', form.usn);
-      fd.append('email', form.email);
-      fd.append('position', form.position);
-      fd.append('gender', form.gender);
+      Object.entries(form).forEach(([k, v]) => v && fd.append(k, v));
       if (photo) fd.append('photo', photo);
-
-      const res = await fetch(`${API_URL}/register`, {
-        method: 'POST',
-        body: fd
-      });
+      const res = await fetch(`${API_URL}/register`, { method: 'POST', body: fd });
       const data = await res.json();
       if (res.ok) {
         setMessage('Registered successfully and pending approval.');
         setForm({ name: '', usn: '', email: '', position: '', gender: '' });
         setPhoto(null);
-      } else {
-        setMessage(data.message || 'Error registering candidate.');
-      }
+      } else setMessage(data.message || 'Error registering candidate.');
     } catch (err) {
       setMessage('Network error.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow p-8 w-full max-w-lg">
-        <h2 className="text-2xl font-bold mb-4">Register as Candidate</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Full Name</label>
-            <input name="name" value={form.name} onChange={handleChange} required className="mt-1 w-full border rounded px-3 py-2" />
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-100 flex items-center justify-center p-6">
+      <div className="bg-white/90 backdrop-blur rounded-2xl shadow-2xl p-8 w-full max-w-xl border border-blue-100">
+        <h2 className="text-3xl font-bold mb-2 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Candidate Registration</h2>
+        <p className="text-sm text-gray-600 text-center mb-6">Fill in accurate details. Each position can only be contested once per candidate.</p>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-xs font-semibold tracking-wide text-gray-700 uppercase">Full Name</label>
+              <input name="name" value={form.name} onChange={handleChange} required className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wide text-gray-700 uppercase">USN</label>
+              <input name="usn" value={form.usn} onChange={handleChange} required className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">USN</label>
-            <input name="usn" value={form.usn} onChange={handleChange} required className="mt-1 w-full border rounded px-3 py-2" />
+          <div className="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-xs font-semibold tracking-wide text-gray-700 uppercase">Email</label>
+              <input name="email" type="email" value={form.email} onChange={handleChange} required className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wide text-gray-700 uppercase">Position</label>
+              <select name="position" value={form.position} onChange={handleChange} required className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                <option value="">Select Position</option>
+                {positions.map(position => (
+                  <option key={position.name} value={position.name}>
+                    {position.displayName}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input name="email" type="email" value={form.email} onChange={handleChange} required className="mt-1 w-full border rounded px-3 py-2" />
+          <div className="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-xs font-semibold tracking-wide text-gray-700 uppercase">Gender (Optional)</label>
+              <select name="gender" value={form.gender} onChange={handleChange} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                <option value="">Not Specified</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wide text-gray-700 uppercase">Photo</label>
+              <input type="file" accept="image/*" onChange={e => setPhoto(e.target.files?.[0] || null)} className="mt-1 w-full text-sm" />
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Position</label>
-            <input name="position" value={form.position} onChange={handleChange} required placeholder="e.g., vice president" className="mt-1 w-full border rounded px-3 py-2" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Gender (optional)</label>
-            <input name="gender" value={form.gender} onChange={handleChange} placeholder="male/female" className="mt-1 w-full border rounded px-3 py-2" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Photo</label>
-            <input type="file" accept="image/*" onChange={e => setPhoto(e.target.files[0])} className="mt-1" />
-          </div>
-          <div className="pt-4">
-            <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">Submit Registration</button>
+          <div className="pt-2">
+            <button disabled={submitting} type="submit" className="w-full relative overflow-hidden group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg shadow-lg transition-all">
+              <span className="relative z-10">{submitting ? 'Submitting...' : 'Submit Registration'}</span>
+              <span className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-white transition-opacity" />
+            </button>
           </div>
         </form>
-        {message && <p className="mt-4 text-center text-sm text-gray-700">{message}</p>}
+        {message && <p className={`mt-6 text-center text-sm font-medium px-4 py-2 rounded-lg ${message.includes('success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{message}</p>}
       </div>
     </div>
   );
 }
+

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const API_URL = 'http://localhost:5000/api/auth';
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/auth`;
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState('');
@@ -40,7 +40,7 @@ export default function Login({ onLogin }) {
       });
       const data = await res.json();
       if (res.ok) {
-        onLogin(email);
+  if (onLogin) onLogin(email, data.token);
       } else {
         setMessage(data.message || 'Invalid OTP.');
       }

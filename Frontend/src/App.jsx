@@ -5,9 +5,13 @@ import Login from './components/Login';
 import Vote from './components/Vote';
 import CandidateRegister from './components/CandidateRegister';
 import Admin from './components/Admin';
+import Analytics from './components/Analytics';
 
 function App() {
   const [userEmail, setUserEmail] = useState(null);
+  const [token, setToken] = useState(null);
+
+  const handleLogin = (email, jwt) => { setUserEmail(email); setToken(jwt); };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -17,8 +21,9 @@ function App() {
           <nav className="flex gap-4 text-sm text-gray-700">
             <Link to="/register" className="hover:text-blue-600">Register</Link>
             <Link to="/vote" className="hover:text-blue-600">Vote</Link>
-            <Link to="/admin" className="hover:text-blue-600">Admin</Link>
+            <Link to="/analytics" className="hover:text-blue-600">Analytics</Link>
             <Link to="/login" className="hover:text-blue-600">Login</Link>
+            {/* Admin link removed for obscurity */}
           </nav>
         </div>
       </header>
@@ -26,9 +31,12 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<CandidateRegister />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/login" element={<ComingSoonLogin />} />
-          <Route path="/vote" element={userEmail ? <Vote userEmail={userEmail} /> : <Navigate to="/login" replace />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/samca2k25-admin" element={<Admin />} />
+          <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          <Route path="/vote" element={userEmail ? <Vote userEmail={userEmail} token={token} /> : <Navigate to="/login" replace />} />
+          <Route path="*" element={<NotFound />} />
+          <Route path="/vote" element={userEmail ? <Vote userEmail={userEmail} token={token} /> : <Navigate to="/login" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
@@ -50,18 +58,7 @@ function Home() {
   );
 }
 
-function ComingSoonLogin() {
-  return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center">
-      <h2 className="text-3xl font-bold mb-4">Voting Day Login</h2>
-      <p className="text-gray-600 max-w-md mb-6">The login and OTP-based voting access will open on the official voting day. Stay tuned!</p>
-      <div className="space-y-2">
-        <div className="inline-block px-4 py-2 rounded-full bg-yellow-100 text-yellow-800 text-sm font-medium">Coming Soon</div>
-        <p className="text-sm text-gray-500">Prepare by reviewing candidate profiles.</p>
-      </div>
-    </div>
-  );
-}
+// ComingSoonLogin component removed; using real Login component now.
 
 function NotFound() {return <div className="p-10 text-center text-gray-600">Page not found.</div>;}
 

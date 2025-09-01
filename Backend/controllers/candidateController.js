@@ -1,8 +1,22 @@
 const Candidate = require('../models/Candidate');
+const Settings = require('../models/Settings');
 
 exports.registerCandidate = async (req, res) => {
+  // Check registration due date
+  const settings = await Settings.getSettings();
+  if (settings.registrationDueDate && new Date() > settings.registrationDueDate) {
+    return res.status(403).json({ message: 'Registration deadline has passed' });
+  }
+
   const { name, usn, email, position, gender } = req.body;
   if (!name || !usn || !email || !position) return res.status(400).json({ message: 'All fields required' });
+  
+  // Check if candidate already exists with same email or USN
+  const existingCandidate = await Candidate.findOne({ $or: [{ email }, { usn }] });
+  if (existingCandidate) {
+    return res.status(400).json({ message: 'Candidate with this email or USN already exists' });
+  }
+  
   const photoUrl = req.file ? `/uploads/${req.file.filename}` : null;
   const candidate = await Candidate.create({ name, usn, email, position, gender, photoUrl });
   res.json({ message: 'Candidate registered and pending approval', candidate });

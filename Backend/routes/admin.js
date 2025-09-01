@@ -12,6 +12,8 @@ function adminAuth(req, res, next) {
 
 router.post('/set-due-date', adminAuth, adminController.setDueDate);
 router.get('/get-due-date', adminAuth, adminController.getDueDate);
+router.post('/set-voting-window', adminAuth, adminController.setVotingWindow);
+router.get('/get-voting-window', adminAuth, adminController.getVotingWindow);
 router.post('/candidate', adminAuth, adminController.addCandidate);
 router.put('/candidate/:id', adminAuth, adminController.editCandidate);
 router.delete('/candidate/:id', adminAuth, adminController.deleteCandidate);
