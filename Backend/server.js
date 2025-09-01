@@ -9,7 +9,13 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
 
-// TODO: Add routes here
+
+const authRoutes = require('./routes/auth');
+const voteRoutes = require('./routes/vote');
+const adminRoutes = require('./routes/admin');
+app.use('/api/auth', authRoutes);
+app.use('/api/vote', voteRoutes);
+app.use('/api/admin', adminRoutes);
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
