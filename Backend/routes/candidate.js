@@ -2,8 +2,11 @@ const express = require('express');
 const router = express.Router();
 const candidateController = require('../controllers/candidateController');
 const adminController = require('../controllers/adminController');
+const adminModule = require('./admin');
+const adminAuth = adminModule.adminAuth;
 const multer = require('multer');
 const path = require('path');
+
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -15,11 +18,10 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage });
-
 router.post('/register', upload.single('photo'), candidateController.registerCandidate);
-router.get('/pending', adminController.adminAuth ? candidateController.listPending : candidateController.listPending);
-router.post('/:id/approve', adminController.adminAuth ? adminController.approveCandidate : candidateController.approveCandidate);
-router.post('/:id/reject', adminController.adminAuth ? adminController.rejectCandidate : candidateController.rejectCandidate);
-router.delete('/:id', adminController.adminAuth ? adminController.deleteCandidate : candidateController.deleteCandidate);
+router.get('/pending', adminAuth, candidateController.listPending);
+router.post('/:id/approve', adminAuth, candidateController.approveCandidate);
+router.post('/:id/reject', adminAuth, candidateController.rejectCandidate);
+router.delete('/:id', adminAuth, candidateController.deleteCandidate);
 
 module.exports = router;

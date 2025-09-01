@@ -10,12 +10,10 @@ function adminAuth(req, res, next) {
   next();
 }
 
-module.exports = { router: router, adminAuth };
-
 router.post('/set-due-date', adminAuth, adminController.setDueDate);
 router.get('/get-due-date', adminAuth, adminController.getDueDate);
 router.post('/candidate', adminAuth, adminController.addCandidate);
 router.put('/candidate/:id', adminAuth, adminController.editCandidate);
 router.delete('/candidate/:id', adminAuth, adminController.deleteCandidate);
 
-module.exports = router;
+module.exports = { router, adminAuth };
