@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/auth`;
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+const API_URL = `${API_BASE}/auth`;
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState(1);
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleRequestOtp = async (e) => {
     e.preventDefault();
@@ -40,7 +43,10 @@ export default function Login({ onLogin }) {
       });
       const data = await res.json();
       if (res.ok) {
-  if (onLogin) onLogin(email, data.token);
+        if (onLogin) onLogin(email, data.token);
+        setMessage('OTP verified. Redirecting to vote...');
+        // Navigate to vote page
+        navigate('/vote');
       } else {
         setMessage(data.message || 'Invalid OTP.');
       }
@@ -99,7 +105,7 @@ export default function Login({ onLogin }) {
             </div>
             <button 
               type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 transform hover:scale-105"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 transform hover:scale-105"
             >
               Verify OTP
             </button>
@@ -115,8 +121,8 @@ export default function Login({ onLogin }) {
         
         {message && (
           <div className={`mt-4 p-3 rounded-lg text-center font-medium ${
-            message.includes('sent') || message.includes('successfully') 
-              ? 'bg-green-100 text-green-800 border border-green-200' 
+            message.includes('sent') || message.includes('successfully') || message.includes('Redirecting')
+              ? 'bg-blue-100 text-blue-800 border border-blue-200' 
               : 'bg-red-100 text-red-800 border border-red-200'
           }`}>
             {message}

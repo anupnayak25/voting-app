@@ -27,6 +27,12 @@ exports.listPending = async (req, res) => {
   res.json({ candidates });
 };
 
+// List all candidates (admin view for registration management)
+exports.listAll = async (req, res) => {
+  const candidates = await Candidate.find();
+  res.json({ candidates });
+};
+
 exports.approveCandidate = async (req, res) => {
   const { id } = req.params;
   const candidate = await Candidate.findByIdAndUpdate(id, { status: 'approved' }, { new: true });

@@ -10,6 +10,12 @@ export default defineConfig({
         target: 'http://localhost:5000',
         changeOrigin: true,
       }
+      ,
+      // Allow loading candidate photos stored on backend
+      '/uploads': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      }
     }
   },
   // Opt into upcoming React Router v7 behaviours to silence warnings early (harmless now)

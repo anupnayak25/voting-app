@@ -4,16 +4,18 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
+
+// CORS: allow all origins
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'https://turbo-goggles-gj9w4wqprj52pgr4-5173.app.github.dev'
-  ],
+  origin: (origin, cb) => cb(null, true), // reflect any origin
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-pass']
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-pass'],
+  optionsSuccessStatus: 200
 }));
+// Express 5 with path-to-regexp v6 can throw on '*' pattern; CORS middleware already handles preflight
+// Removed explicit app.options('*', cors());
+
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
@@ -34,7 +36,9 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/candidate', candidateRoutes);
 app.use('/api/position', positionRoutes);
 
+
 const mongoUri = process.env.MONGO_URI;
+const mongoPoolSize = process.env.MONGO_POOL_SIZE ? Number(process.env.MONGO_POOL_SIZE) : 10;
 
 if (!mongoUri) {
   console.error('Missing MONGO_URI environment variable');
@@ -46,14 +50,21 @@ function redactMongoUri(uri) {
   return uri.replace(/:\/\/([^:]+):([^@]+)@/, (m, u) => `://${u}:***@`);
 }
 
-mongoose.connect(mongoUri)
-  .then(() => {
-    console.log('MongoDB connected:', redactMongoUri(mongoUri));
+// Use async/await for connection
+(async () => {
+  try {
+    await mongoose.connect(mongoUri, {
+      maxPoolSize: mongoPoolSize,
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000
+    });
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch((err) => {
+    console.log(`[mongoose] Connected with pool size: ${mongoPoolSize}`);
+  } catch (err) {
     console.error('MongoDB connection error:', err.message);
-  });
+    process.exit(1);
+  }
+})();
 
 mongoose.connection.on('error', (err) => {
   console.error('Mongoose connection error:', err.message);

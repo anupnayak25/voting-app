@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/candidate`;
-const POSITION_API = `${import.meta.env.VITE_API_BASE_URL}/position`;
+// Use relative /api in dev (Vite proxy) to avoid CORS; allow override with VITE_API_BASE_URL
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+const API_URL = `${API_BASE}/candidate`;
+const POSITION_API = `${API_BASE}/position`;
 
 export default function CandidateRegister() {
   const [form, setForm] = useState({ name: '', usn: '', email: '', position: '', gender: '' });

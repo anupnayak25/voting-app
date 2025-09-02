@@ -21,7 +21,7 @@ exports.requestOTP = async (req, res) => {
 
   let user = await User.findOne({ email });
   if (user && user.hasVoted) {
-    return res.status(403).json({ message: 'You have already voted.' });
+    return res.status(403).json({ message: 'You have already voted. OTP not sent.' });
   }
 
   const otp = generateOTP();
@@ -31,14 +31,18 @@ exports.requestOTP = async (req, res) => {
   user.otpExpires = otpExpires;
   await user.save();
 
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: 'Your Voting OTP',
-    text: `Your OTP for voting is: ${otp}`
-  });
-
-  res.json({ message: 'OTP sent to email.' });
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Your Voting OTP',
+      text: `Your OTP for voting is: ${otp}`
+    });
+    res.json({ message: 'OTP sent to email.' });
+  } catch (err) {
+    console.error('[mailer] sendMail error:', err);
+    res.status(500).json({ message: 'Failed to send OTP email. Please try again.' });
+  }
 };
 
 exports.verifyOTP = async (req, res) => {
