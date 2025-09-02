@@ -11,16 +11,16 @@ export default function AdminLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-light-bg">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-sm border-b border-primary-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">Admin Panel</h1>
+              <h1 className="text-xl font-semibold text-text-primary">Admin Panel</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-500">Student Election Portal</span>
+              <span className="text-sm text-text-secondary">SAMCA Election Portal</span>
             </div>
           </div>
         </div>
@@ -29,7 +29,7 @@ export default function AdminLayout() {
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           {/* Navigation Tabs */}
-          <div className="border-b border-gray-200 mb-6">
+          <div className="border-b border-primary-200 mb-6">
             <nav className="-mb-px flex space-x-8" aria-label="Tabs">
               {navItems.map((item) => {
                 const isActive = item.exact 
@@ -42,8 +42,8 @@ export default function AdminLayout() {
                     to={item.path}
                     className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
                       isActive
-                        ? 'border-blue-500 text-blue-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        ? 'border-navy text-navy'
+                        : 'border-transparent text-text-secondary hover:text-text-primary hover:border-primary-300'
                     }`}
                   >
                     {item.label}
@@ -54,7 +54,7 @@ export default function AdminLayout() {
           </div>
 
           {/* Content Area */}
-          <div className="bg-white rounded-lg shadow">
+          <div className="bg-white rounded-lg shadow border border-primary-100">
             <Outlet />
           </div>
         </div>

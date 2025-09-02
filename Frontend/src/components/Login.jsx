@@ -9,6 +9,7 @@ export default function Login({ onLogin }) {
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState(1);
   const [message, setMessage] = useState('');
+  const [alreadyVoted, setAlreadyVoted] = useState(false);
   const navigate = useNavigate();
 
   const handleRequestOtp = async (e) => {
@@ -25,7 +26,11 @@ export default function Login({ onLogin }) {
         setStep(2);
         setMessage('OTP sent to your email.');
       } else {
-        setMessage(data.message || 'Error sending OTP.');
+        const errMsg = data.message || 'Error sending OTP.';
+        setMessage(errMsg);
+        if (/already voted/i.test(errMsg)) {
+          setAlreadyVoted(true);
+        }
       }
     } catch (err) {
       setMessage('Network error.');
@@ -48,7 +53,11 @@ export default function Login({ onLogin }) {
         // Navigate to vote page
         navigate('/vote');
       } else {
-        setMessage(data.message || 'Invalid OTP.');
+        const errMsg = data.message || 'Invalid OTP.';
+        setMessage(errMsg);
+        if (/already voted/i.test(errMsg)) {
+          setAlreadyVoted(true);
+        }
       }
     } catch (err) {
       setMessage('Network error.');
@@ -56,17 +65,17 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md border border-primary-100">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">Student Election</h2>
-          <p className="text-gray-600">Login to cast your vote</p>
+          <h2 className="text-3xl font-bold text-text-primary mb-2">SAMCA Election</h2>
+          <p className="text-text-secondary">Login to cast your vote</p>
         </div>
         
         {step === 1 && (
           <form onSubmit={handleRequestOtp} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-text-primary mb-2">
                 College Email
               </label>
               <input
@@ -74,13 +83,13 @@ export default function Login({ onLogin }) {
                 placeholder="nu25mca***@nmamit.in"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                className="input-field"
                 required
               />
             </div>
             <button 
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 transform hover:scale-105"
+              className="btn-primary w-full py-3 text-lg"
             >
               Request OTP
             </button>
@@ -90,7 +99,7 @@ export default function Login({ onLogin }) {
         {step === 2 && (
           <form onSubmit={handleVerifyOtp} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-text-primary mb-2">
                 Enter OTP
               </label>
               <input
@@ -98,21 +107,21 @@ export default function Login({ onLogin }) {
                 placeholder="6-digit OTP"
                 value={otp}
                 onChange={e => setOtp(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-center text-lg tracking-widest"
+                className="input-field text-center text-lg tracking-widest"
                 required
                 maxLength="6"
               />
             </div>
             <button 
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 transform hover:scale-105"
+              className="btn-primary w-full py-3 text-lg"
             >
               Verify OTP
             </button>
             <button 
               type="button"
               onClick={() => setStep(1)}
-              className="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
+              className="btn-secondary w-full py-2"
             >
               Back
             </button>
@@ -122,13 +131,32 @@ export default function Login({ onLogin }) {
         {message && (
           <div className={`mt-4 p-3 rounded-lg text-center font-medium ${
             message.includes('sent') || message.includes('successfully') || message.includes('Redirecting')
-              ? 'bg-blue-100 text-blue-800 border border-blue-200' 
-              : 'bg-red-100 text-red-800 border border-red-200'
+              ? 'bg-accent-50 text-accent-700 border border-accent-200' 
+              : 'bg-red-50 text-red-700 border border-red-200'
           }`}>
             {message}
           </div>
         )}
       </div>
+      {alreadyVoted && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 animate-fade-in border border-primary-100">
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center mr-3">
+                <svg className="w-6 h-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v4m0 4h.01M12 5a7 7 0 100 14 7 7 0 000-14z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-text-primary">Already Voted</h3>
+            </div>
+            <p className="text-sm text-text-secondary mb-6">Our records show you have already cast your vote. Each student can vote only once. Thank you for participating!</p>
+            <div className="flex justify-end space-x-3">
+              <button onClick={() => { setAlreadyVoted(false); }} className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary">Close</button>
+              <button onClick={() => { setAlreadyVoted(false); navigate('/'); }} className="px-4 py-2 text-sm font-medium bg-navy text-white rounded-lg hover:bg-primary-700">Home</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -33,29 +33,27 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-white/95 backdrop-blur-md shadow-sm border-b sticky top-0 z-50">
+    <div className="min-h-screen flex flex-col bg-light-bg">
+      <header className="bg-white/95 backdrop-blur-md shadow-sm border-b border-primary-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              <div className="w-8 h-8 bg-navy rounded-lg flex items-center justify-center">
+                <
               </div>
-              <span className="font-bold text-xl text-gray-900">Student Election</span>
+              <span className="font-bold text-xl text-text-primary">SAMCA Election</span>
             </Link>
             
             <nav className="hidden md:flex items-center space-x-8">
               <Link 
                 to="/register" 
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                className="text-text-secondary hover:text-navy font-medium transition-colors"
               >
                 Register
               </Link>
               <Link 
                 to="/vote" 
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                className="text-text-secondary hover:text-navy font-medium transition-colors"
               >
                 Vote
               </Link>
@@ -71,7 +69,7 @@ function App() {
 
             {/* Mobile menu button */}
             <div className="md:hidden">
-              <button className="text-gray-700 hover:text-blue-600">
+              <button className="text-text-secondary hover:text-navy">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
@@ -97,19 +95,19 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      <footer className="bg-gray-900 text-white">
+      <footer className="bg-navy text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
+              <div className="w-6 h-6 bg-accent-500 rounded flex items-center justify-center">
                 <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <span className="font-semibold">Student Election Portal</span>
+              <span className="font-semibold">SAMCA Election Portal</span>
             </div>
-            <div className="text-sm text-gray-400">
-              &copy; {new Date().getFullYear()} Student Election Portal. All rights reserved.
+            <div className="text-sm text-primary-300">
+              &copy; {new Date().getFullYear()} SAMCA Election Portal. All rights reserved.
             </div>
           </div>
         </div>
@@ -120,15 +118,15 @@ function App() {
 
 function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-100">
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <div className="text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-            Student Election
-            <span className="block text-blue-600">Portal 2025</span>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-text-primary mb-6">
+            SAMCA Election
+            <span className="block text-accent-600">Portal 2025</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-text-secondary mb-8 max-w-3xl mx-auto leading-relaxed">
             Your voice matters. Register as a candidate, explore available positions, 
             and participate in shaping your student community's future.
           </p>
@@ -137,7 +135,7 @@ function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Link 
               to="/register" 
-              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-xl bg-blue-600 text-white shadow-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-200"
+              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-xl bg-navy text-white shadow-lg hover:bg-primary-700 transform hover:scale-105 transition-all duration-200"
             >
               <svg className="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -146,7 +144,7 @@ function Home() {
             </Link>
             <Link 
               to="/vote" 
-              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-xl bg-gray-800 text-white shadow-lg hover:bg-gray-900 transform hover:scale-105 transition-all duration-200"
+              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-xl bg-accent-600 text-white shadow-lg hover:bg-accent-700 transform hover:scale-105 transition-all duration-200"
             >
               <svg className="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -158,38 +156,38 @@ function Home() {
 
         {/* Features Grid */}
         <div className="grid md:grid-cols-3 gap-8 mt-20">
-          <div className="text-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="text-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-primary-100">
+            <div className="w-16 h-16 bg-accent-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="h-8 w-8 text-accent-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-3">Easy Registration</h3>
-            <p className="text-gray-600">
+            <h3 className="text-xl font-semibold text-text-primary mb-3">Easy Registration</h3>
+            <p className="text-text-secondary">
               Simple candidate registration process with photo upload and position selection.
             </p>
           </div>
 
-          <div className="text-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+          <div className="text-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-primary-100">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-3">Secure Voting</h3>
-            <p className="text-gray-600">
+            <h3 className="text-xl font-semibold text-text-primary mb-3">Secure Voting</h3>
+            <p className="text-text-secondary">
               OTP-based authentication ensures each student can vote once securely.
             </p>
           </div>
 
-          <div className="text-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
-            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          <div className="text-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-primary-100">
+            <div className="w-16 h-16 bg-navy/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="h-8 w-8 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-3">Real-time Results</h3>
-            <p className="text-gray-600">
+            <h3 className="text-xl font-semibold text-text-primary mb-3">Real-time Results</h3>
+            <p className="text-text-secondary">
               Track election progress with live analytics and transparent vote counting.
             </p>
           </div>
@@ -203,20 +201,20 @@ function Home() {
 
 function NotFound() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-light-bg flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
-          <svg className="mx-auto h-24 w-24 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="mx-auto h-24 w-24 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">Page not found</h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <h2 className="mt-6 text-3xl font-bold text-text-primary">Page not found</h2>
+          <p className="mt-2 text-sm text-text-secondary">
             Sorry, we couldn't find the page you're looking for.
           </p>
           <div className="mt-6">
             <Link
               to="/"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-navy hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500"
             >
               Go back home
             </Link>

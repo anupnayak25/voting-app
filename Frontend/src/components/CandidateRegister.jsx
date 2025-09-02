@@ -53,29 +53,29 @@ export default function CandidateRegister() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-100 flex items-center justify-center p-6">
-      <div className="bg-white/90 backdrop-blur rounded-2xl shadow-2xl p-8 w-full max-w-xl border border-blue-100">
-        <h2 className="text-3xl font-bold mb-2 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Candidate Registration</h2>
-        <p className="text-sm text-gray-600 text-center mb-6">Fill in accurate details. Each position can only be contested once per candidate.</p>
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-6">
+      <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8 w-full max-w-xl border border-primary-100">
+        <h2 className="text-3xl font-bold mb-2 text-center bg-clip-text text-transparent bg-gradient-to-r from-navy to-accent-600">Candidate Registration</h2>
+        <p className="text-sm text-text-secondary text-center mb-6">Fill in accurate details. Each position can only be contested once per candidate.</p>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid sm:grid-cols-2 gap-5">
             <div>
-              <label className="block text-xs font-semibold tracking-wide text-gray-700 uppercase">Full Name</label>
-              <input name="name" value={form.name} onChange={handleChange} required className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+              <label className="block text-xs font-semibold tracking-wide text-text-primary uppercase">Full Name</label>
+              <input name="name" value={form.name} onChange={handleChange} required className="input-field mt-1" />
             </div>
             <div>
-              <label className="block text-xs font-semibold tracking-wide text-gray-700 uppercase">USN</label>
-              <input name="usn" value={form.usn} onChange={handleChange} required className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+              <label className="block text-xs font-semibold tracking-wide text-text-primary uppercase">USN</label>
+              <input name="usn" value={form.usn} onChange={handleChange} required className="input-field mt-1" />
             </div>
           </div>
           <div className="grid sm:grid-cols-2 gap-5">
             <div>
-              <label className="block text-xs font-semibold tracking-wide text-gray-700 uppercase">Email</label>
-              <input name="email" type="email" value={form.email} onChange={handleChange} required className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+              <label className="block text-xs font-semibold tracking-wide text-text-primary uppercase">Email</label>
+              <input name="email" type="email" value={form.email} onChange={handleChange} required className="input-field mt-1" />
             </div>
             <div>
-              <label className="block text-xs font-semibold tracking-wide text-gray-700 uppercase">Position</label>
-              <select name="position" value={form.position} onChange={handleChange} required className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+              <label className="block text-xs font-semibold tracking-wide text-text-primary uppercase">Position</label>
+              <select name="position" value={form.position} onChange={handleChange} required className="input-field mt-1 bg-white">
                 <option value="">Select Position</option>
                 {positions.map(position => (
                   <option key={position.name} value={position.name}>
@@ -87,8 +87,8 @@ export default function CandidateRegister() {
           </div>
           <div className="grid sm:grid-cols-2 gap-5">
             <div>
-              <label className="block text-xs font-semibold tracking-wide text-gray-700 uppercase">Gender (Optional)</label>
-              <select name="gender" value={form.gender} onChange={handleChange} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+              <label className="block text-xs font-semibold tracking-wide text-text-primary uppercase">Gender (Optional)</label>
+              <select name="gender" value={form.gender} onChange={handleChange} className="input-field mt-1 bg-white">
                 <option value="">Not Specified</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -96,18 +96,18 @@ export default function CandidateRegister() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold tracking-wide text-gray-700 uppercase">Photo</label>
-              <input type="file" accept="image/*" onChange={e => setPhoto(e.target.files?.[0] || null)} className="mt-1 w-full text-sm" />
+              <label className="block text-xs font-semibold tracking-wide text-text-primary uppercase">Photo</label>
+              <input type="file" accept="image/*" onChange={e => setPhoto(e.target.files?.[0] || null)} className="mt-1 w-full text-sm text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-50 file:text-navy hover:file:bg-primary-100" />
             </div>
           </div>
           <div className="pt-2">
-            <button disabled={submitting} type="submit" className="w-full relative overflow-hidden group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg shadow-lg transition-all">
+            <button disabled={submitting} type="submit" className="w-full relative overflow-hidden group bg-gradient-to-r from-navy to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-semibold py-3 rounded-lg shadow-lg transition-all">
               <span className="relative z-10">{submitting ? 'Submitting...' : 'Submit Registration'}</span>
               <span className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-white transition-opacity" />
             </button>
           </div>
         </form>
-        {message && <p className={`mt-6 text-center text-sm font-medium px-4 py-2 rounded-lg ${message.includes('success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{message}</p>}
+        {message && <p className={`mt-6 text-center text-sm font-medium px-4 py-2 rounded-lg ${message.includes('success') ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>{message}</p>}
       </div>
     </div>
   );
