@@ -2,13 +2,8 @@ const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
 
-// Simple admin auth middleware (password in .env)
-function adminAuth(req, res, next) {
-  const adminPass = process.env.ADMIN_PASS;
-  const pass = req.headers['x-admin-pass'];
-  if (!adminPass || pass !== adminPass) return res.status(401).json({ message: 'Unauthorized' });
-  next();
-}
+// Admin authentication disabled; middleware retained as a no-op for future reinstatement.
+function adminAuth(_req, _res, next) { next(); }
 
 router.post('/set-due-date', adminAuth, adminController.setDueDate);
 router.get('/get-due-date', adminAuth, adminController.getDueDate);

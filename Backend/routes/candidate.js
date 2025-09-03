@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 const candidateController = require('../controllers/candidateController');
 const adminController = require('../controllers/adminController');
-const adminModule = require('./admin');
-const adminAuth = adminModule.adminAuth;
+const { adminAuth } = require('./admin'); // now a no-op
 const multer = require('multer');
 const path = require('path');
 

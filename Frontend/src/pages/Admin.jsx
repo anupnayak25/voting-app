@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Analytics from './Analytics';
+import Analytics from '../components/Analytics';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 const CANDIDATE_API = `${API_BASE}/candidate`;
 const ADMIN_API = `${API_BASE}/admin`;
-const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS;
 
 export default function Admin() {
   const [view, setView] = useState('settings'); // settings | registration | analytics
@@ -19,7 +18,7 @@ export default function Admin() {
   const fetchAllCandidates = async () => {
     setLoadingCandidates(true);
     try {
-      const res = await fetch(`${CANDIDATE_API}/all`, { headers: { 'x-admin-pass': ADMIN_PASS } });
+  const res = await fetch(`${CANDIDATE_API}/all`);
       const data = await res.json();
       if (res.ok) setCandidates(data.candidates);
       else setMessage(data.message || 'Error loading candidates');
@@ -31,14 +30,14 @@ export default function Admin() {
   };
 
   const fetchVotingWindow = async () => {
-    const res = await fetch(`${ADMIN_API}/get-voting-window`, { headers: { 'x-admin-pass': ADMIN_PASS } });
+  const res = await fetch(`${ADMIN_API}/get-voting-window`);
     if (res.ok) {
       const data = await res.json();
       setVotingWindow({ start: data.start ? data.start.slice(0,16) : '', end: data.end ? data.end.slice(0,16) : '' });
     }
   };
   const fetchRegistrationDueDate = async () => {
-    const res = await fetch(`${ADMIN_API}/get-due-date`, { headers: { 'x-admin-pass': ADMIN_PASS } });
+  const res = await fetch(`${ADMIN_API}/get-due-date`);
     if (res.ok) {
       const data = await res.json();
       setRegistrationDueDate(data.dueDate ? data.dueDate.slice(0,16) : '');
@@ -49,13 +48,13 @@ export default function Admin() {
 
   const action = async (id, act) => {
     setMessage('');
-    const res = await fetch(`${CANDIDATE_API}/${id}/${act}`, { method: 'POST', headers: { 'x-admin-pass': ADMIN_PASS } });
+  const res = await fetch(`${CANDIDATE_API}/${id}/${act}`, { method: 'POST' });
     const data = await res.json();
     if (res.ok) { setMessage(data.message); fetchAllCandidates(); }
     else setMessage(data.message || 'Error');
   };
   const remove = async (id) => {
-    const res = await fetch(`${CANDIDATE_API}/${id}`, { method: 'DELETE', headers: { 'x-admin-pass': ADMIN_PASS } });
+  const res = await fetch(`${CANDIDATE_API}/${id}`, { method: 'DELETE' });
     const data = await res.json();
     if (res.ok) { setMessage(data.message); fetchAllCandidates(); }
     else setMessage(data.message || 'Error');
@@ -88,7 +87,7 @@ export default function Admin() {
     <div className="space-y-8">
       <div className="bg-white p-4 rounded shadow">
         <h3 className="font-semibold mb-2">Registration Due Date</h3>
-        <form onSubmit={async e=>{e.preventDefault();setSavingDueDate(true);setMessage('');const res=await fetch(`${ADMIN_API}/set-due-date`,{method:'POST',headers:{'Content-Type':'application/json','x-admin-pass':ADMIN_PASS},body:JSON.stringify({ dueDate: registrationDueDate })});const data=await res.json();if(res.ok) setMessage(data.message); else setMessage(data.message||'Error saving due date');setSavingDueDate(false);}} className="grid md:grid-cols-2 gap-4 items-end">
+        <form onSubmit={async e=>{e.preventDefault();setSavingDueDate(true);setMessage('');const res=await fetch(`${ADMIN_API}/set-due-date`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ dueDate: registrationDueDate })});const data=await res.json();if(res.ok) setMessage(data.message); else setMessage(data.message||'Error saving due date');setSavingDueDate(false);}} className="grid md:grid-cols-2 gap-4 items-end">
           <label className="flex flex-col text-sm">Registration Deadline
             <input type="datetime-local" value={registrationDueDate} onChange={e=>setRegistrationDueDate(e.target.value)} className="mt-1 border rounded px-2 py-1" required />
           </label>
@@ -98,7 +97,7 @@ export default function Admin() {
       </div>
       <div className="bg-white p-4 rounded shadow">
         <h3 className="font-semibold mb-2">Voting Window</h3>
-        <form onSubmit={async e=>{e.preventDefault();setSavingWindow(true);setMessage('');const body={ start:votingWindow.start,end:votingWindow.end||undefined };const res=await fetch(`${ADMIN_API}/set-voting-window`,{method:'POST',headers:{'Content-Type':'application/json','x-admin-pass':ADMIN_PASS},body:JSON.stringify(body)});const data=await res.json();if(res.ok) setMessage(data.message); else setMessage(data.message||'Error saving window');setSavingWindow(false);}} className="grid md:grid-cols-3 gap-4 items-end">
+        <form onSubmit={async e=>{e.preventDefault();setSavingWindow(true);setMessage('');const body={ start:votingWindow.start,end:votingWindow.end||undefined };const res=await fetch(`${ADMIN_API}/set-voting-window`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await res.json();if(res.ok) setMessage(data.message); else setMessage(data.message||'Error saving window');setSavingWindow(false);}} className="grid md:grid-cols-3 gap-4 items-end">
           <label className="flex flex-col text-sm">Start
             <input type="datetime-local" value={votingWindow.start} onChange={e=>setVotingWindow(v=>({...v,start:e.target.value}))} className="mt-1 border rounded px-2 py-1" required />
           </label>

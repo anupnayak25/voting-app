@@ -174,7 +174,7 @@ const Analytics = () => {
                   </div>
                 </div>
 
-                <div className="space-y-3">
+                {/* <div className="space-y-3">
                   {positionData.candidateVotes.slice(0, 3).map((candidate, candidateIndex) => (
                     <div key={candidate.candidateId} className="flex items-center justify-between">
                       <div className="flex-1">
@@ -199,7 +199,7 @@ const Analytics = () => {
                       +{positionData.candidateVotes.length - 3} more candidates
                     </div>
                   )}
-                </div>
+                </div> */}
               </div>
             );
           })}

@@ -1,14 +1,15 @@
 
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import Login from './components/Login';
-import Vote from './components/Vote';
-import CandidateRegister from './components/CandidateRegister';
+import Login from './pages/Login';
+import Vote from './pages/Vote';
+import CandidateRegister from './pages/CandidateRegister';
 import AdminLayout from './components/AdminLayout';
-import AdminLogin from './components/AdminLogin';
+import AdminLogin from './pages/AdminLogin';
 import AdminSettings from './components/AdminSettings';
 import AdminRegistrations from './components/AdminRegistrations';
 import Analytics from './components/Analytics';
+import logo from './assets/samca_logo.png';
 
 function App() {
   const [userEmail, setUserEmail] = useState(null);
@@ -38,8 +39,8 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-navy rounded-lg flex items-center justify-center">
-                <
+              <div className="w-8 h-8  rounded-full flex items-center justify-center">
+                <img src={logo} className=' rounded-full' alt="logo"/>
               </div>
               <span className="font-bold text-xl text-text-primary">SAMCA Election</span>
             </Link>
@@ -99,10 +100,8 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="w-6 h-6 bg-accent-500 rounded flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              <div className="w-8 h-8  rounded-full flex items-center justify-center">
+                <img src={logo} className=' rounded-full' alt="logo"/>
               </div>
               <span className="font-semibold">SAMCA Election Portal</span>
             </div>
@@ -197,7 +196,6 @@ function Home() {
   );
 }
 
-// ComingSoonLogin component removed; using real Login component now.
 
 function NotFound() {
   return (

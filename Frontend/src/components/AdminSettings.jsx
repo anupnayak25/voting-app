@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 const ADMIN_API = `${API_BASE}/admin`;
-const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS;
 
 export default function AdminSettings() {
   const [message, setMessage] = useState('');
@@ -14,9 +13,7 @@ export default function AdminSettings() {
 
   const fetchVotingWindow = async () => {
     try {
-      const res = await fetch(`${ADMIN_API}/get-voting-window`, { 
-        headers: { 'x-admin-pass': ADMIN_PASS } 
-      });
+  const res = await fetch(`${ADMIN_API}/get-voting-window`);
       if (res.ok) {
         const data = await res.json();
         setVotingWindow({ 
@@ -31,9 +28,7 @@ export default function AdminSettings() {
 
   const fetchRegistrationDueDate = async () => {
     try {
-      const res = await fetch(`${ADMIN_API}/get-due-date`, { 
-        headers: { 'x-admin-pass': ADMIN_PASS } 
-      });
+  const res = await fetch(`${ADMIN_API}/get-due-date`);
       if (res.ok) {
         const data = await res.json();
         setRegistrationDueDate(data.dueDate ? data.dueDate.slice(0,16) : '');
@@ -60,10 +55,7 @@ export default function AdminSettings() {
     try {
       const res = await fetch(`${ADMIN_API}/set-due-date`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-pass': ADMIN_PASS
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ dueDate: registrationDueDate })
       });
       
@@ -93,10 +85,7 @@ export default function AdminSettings() {
       
       const res = await fetch(`${ADMIN_API}/set-voting-window`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-pass': ADMIN_PASS
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       });
       

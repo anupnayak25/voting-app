@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 const CANDIDATE_API = `${API_BASE}/candidate`;
-const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS;
 
 export default function AdminRegistrations() {
   const [candidates, setCandidates] = useState([]);
@@ -13,9 +12,7 @@ export default function AdminRegistrations() {
   const fetchAllCandidates = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${CANDIDATE_API}/all`, { 
-        headers: { 'x-admin-pass': ADMIN_PASS } 
-      });
+  const res = await fetch(`${CANDIDATE_API}/all`);
       const data = await res.json();
       if (res.ok) {
         setCandidates(data.candidates);
@@ -37,10 +34,7 @@ export default function AdminRegistrations() {
   const handleAction = async (id, action) => {
     setMessage('');
     try {
-      const res = await fetch(`${CANDIDATE_API}/${id}/${action}`, { 
-        method: 'POST', 
-        headers: { 'x-admin-pass': ADMIN_PASS } 
-      });
+  const res = await fetch(`${CANDIDATE_API}/${id}/${action}`, { method: 'POST' });
       const data = await res.json();
       if (res.ok) {
         setMessage(`Candidate ${action}d successfully`);
@@ -60,10 +54,7 @@ export default function AdminRegistrations() {
     
     setMessage('');
     try {
-      const res = await fetch(`${CANDIDATE_API}/${id}`, { 
-        method: 'DELETE', 
-        headers: { 'x-admin-pass': ADMIN_PASS } 
-      });
+  const res = await fetch(`${CANDIDATE_API}/${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (res.ok) {
         setMessage('Candidate deleted successfully');

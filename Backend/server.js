@@ -10,7 +10,8 @@ app.use(cors({
   origin: (origin, cb) => cb(null, true), // reflect any origin
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-pass'],
+  // Removed 'x-admin-pass' since admin header auth is disabled
+  allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 200
 }));
 // Express 5 with path-to-regexp v6 can throw on '*' pattern; CORS middleware already handles preflight
