@@ -152,7 +152,7 @@ export default function Login({ onLogin }) {
             <p className="text-sm text-text-secondary mb-6">Our records show you have already cast your vote. Each student can vote only once. Thank you for participating!</p>
             <div className="flex justify-end space-x-3">
               <button onClick={() => { setAlreadyVoted(false); }} className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary">Close</button>
-              <button onClick={() => { setAlreadyVoted(false); navigate('/'); }} className="px-4 py-2 text-sm font-medium bg-navy text-white rounded-lg hover:bg-primary-700">Home</button>
+              <button onClick={() => { setAlreadyVoted(false); navigate('/'); }} className="px-4 py-2 text-sm font-medium bg-primary-800 text-white rounded-lg hover:bg-primary-700">Home</button>
             </div>
           </div>
         </div>

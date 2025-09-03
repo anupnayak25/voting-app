@@ -17,6 +17,7 @@ function App() {
   const [isAdminAuthed, setIsAdminAuthed] = useState(() => {
     try { return localStorage.getItem('adminAuthed') === 'true'; } catch { return false; }
   });
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -48,13 +49,13 @@ function App() {
             <nav className="hidden md:flex items-center space-x-8">
               <Link 
                 to="/register" 
-                className="text-text-secondary hover:text-navy font-medium transition-colors"
+                className="text-text-secondary hover:text-primary-800 font-medium transition-colors"
               >
                 Register
               </Link>
               <Link 
                 to="/vote" 
-                className="text-text-secondary hover:text-navy font-medium transition-colors"
+                className="text-text-secondary hover:text-primary-800 font-medium transition-colors"
               >
                 Vote
               </Link>
@@ -70,7 +71,10 @@ function App() {
 
             {/* Mobile menu button */}
             <div className="md:hidden">
-              <button className="text-text-secondary hover:text-navy">
+              <button 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-text-secondary hover:text-primary-800 transition-colors"
+              >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
@@ -79,6 +83,43 @@ function App() {
           </div>
         </div>
       </header>
+
+      {/* Mobile Navigation Drawer */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden">
+          <div className="fixed inset-0 z-40 bg-black bg-opacity-50" onClick={() => setIsMobileMenuOpen(false)}></div>
+          <div className="fixed top-16 left-0 right-0 z-50 bg-white shadow-lg border-b border-primary-100">
+            <nav className="px-4 py-4 space-y-3">
+              <Link 
+                to="/register" 
+                className="block text-text-secondary hover:text-primary-800 font-medium transition-colors py-2 px-2 rounded-lg hover:bg-primary-50"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Register
+              </Link>
+              <Link 
+                to="/vote" 
+                className="block text-text-secondary hover:text-primary-800 font-medium transition-colors py-2 px-2 rounded-lg hover:bg-primary-50"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Vote
+              </Link>
+              {isAdminAuthed && (
+                <button 
+                  onClick={() => {
+                    handleAdminLogout();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="block w-full text-left bg-red-600 text-white px-3 py-2 rounded-lg font-medium hover:bg-red-700 transition-colors"
+                >
+                  Admin Logout
+                </button>
+              )}
+            </nav>
+          </div>
+        </div>
+      )}
+
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -96,7 +137,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      <footer className="bg-navy text-white">
+      <footer className="bg-primary-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
@@ -105,7 +146,7 @@ function App() {
               </div>
               <span className="font-semibold">SAMCA Election Portal</span>
             </div>
-            <div className="text-sm text-primary-300">
+            <div className="text-sm text-primary-200">
               &copy; {new Date().getFullYear()} SAMCA Election Portal. All rights reserved.
             </div>
           </div>
@@ -134,7 +175,7 @@ function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Link 
               to="/register" 
-              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-xl bg-navy text-white shadow-lg hover:bg-primary-700 transform hover:scale-105 transition-all duration-200"
+              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-xl bg-primary-800 text-white shadow-lg hover:bg-primary-700 transform hover:scale-105 transition-all duration-200"
             >
               <svg className="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -180,8 +221,8 @@ function Home() {
           </div>
 
           <div className="text-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-primary-100">
-            <div className="w-16 h-16 bg-navy/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="h-8 w-8 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="h-8 w-8 text-primary-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
@@ -212,7 +253,7 @@ function NotFound() {
           <div className="mt-6">
             <Link
               to="/"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-navy hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-800 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500"
             >
               Go back home
             </Link>

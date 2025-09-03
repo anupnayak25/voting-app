@@ -42,7 +42,7 @@ export default function AdminLayout() {
                     to={item.path}
                     className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
                       isActive
-                        ? 'border-navy text-navy'
+                        ? 'border-primary-800 text-primary-800'
                         : 'border-transparent text-text-secondary hover:text-text-primary hover:border-primary-300'
                     }`}
                   >

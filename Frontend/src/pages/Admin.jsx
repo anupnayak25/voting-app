@@ -104,7 +104,7 @@ export default function Admin() {
             <label className="flex flex-col text-sm">End (optional)
             <input type="datetime-local" value={votingWindow.end} onChange={e=>setVotingWindow(v=>({...v,end:e.target.value}))} className="mt-1 border rounded px-2 py-1" />
           </label>
-          <button disabled={savingWindow} className="bg-blue-600 text-white px-4 py-2 rounded h-10 mt-4 md:mt-0">{savingWindow?'Saving...':'Save Window'}</button>
+          <button disabled={savingWindow} className="bg-accent-600 text-white px-4 py-2 rounded h-10 mt-4 md:mt-0">{savingWindow?'Saving...':'Save Window'}</button>
         </form>
         <p className="text-xs text-gray-500 mt-2">Users can request OTP / vote only within the start–end window.</p>
       </div>
@@ -152,7 +152,7 @@ export default function Admin() {
           {['settings','registration','analytics'].map(key => {
             const label = key.charAt(0).toUpperCase()+key.slice(1);
             const active = view===key;
-            return <button key={key} onClick={()=>setView(key)} className={`w-full text-left px-3 py-2 rounded transition ${active?'bg-blue-600 text-white':'hover:bg-blue-50 text-gray-700'}`}>{label}{key==='registration' && candidates.length>0 && <span className="ml-2 text-xs bg-gray-200 rounded px-2">{pending.length} pending</span>}</button>;
+            return <button key={key} onClick={()=>setView(key)} className={`w-full text-left px-3 py-2 rounded transition ${active?'bg-accent-600 text-white':'hover:bg-accent-50 text-gray-700'}`}>{label}{key==='registration' && candidates.length>0 && <span className="ml-2 text-xs bg-gray-200 rounded px-2">{pending.length} pending</span>}</button>;
           })}
         </nav>
         {message && <div className="p-3 text-xs bg-green-50 text-green-700 border-t max-h-32 overflow-auto">{message}</div>}

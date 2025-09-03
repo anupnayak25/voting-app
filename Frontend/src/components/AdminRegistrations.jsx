@@ -84,7 +84,7 @@ export default function AdminRegistrations() {
   const StatusBadge = ({ status }) => {
     const styles = {
       pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      approved: 'bg-blue-100 text-blue-800 border-blue-200',
+      approved: 'bg-accent-100 text-accent-800 border-accent-200',
       rejected: 'bg-red-100 text-red-800 border-red-200'
     };
     
@@ -100,7 +100,7 @@ export default function AdminRegistrations() {
       {candidate.status !== 'approved' && (
         <button
           onClick={() => handleAction(candidate._id, 'approve')}
-          className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white bg-accent-600 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500"
         >
           Approve
         </button>
@@ -170,7 +170,7 @@ export default function AdminRegistrations() {
               onClick={() => setFilter(key)}
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 filter === key
-                  ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                  ? 'bg-accent-100 text-accent-700 border border-accent-200'
                   : 'text-gray-500 hover:text-gray-700 border border-transparent'
               }`}
             >
@@ -184,7 +184,7 @@ export default function AdminRegistrations() {
       {message && (
         <div className={`mb-6 p-4 rounded-md ${
           message.includes('successfully')
-            ? 'bg-blue-50 text-blue-800 border border-blue-200'
+            ? 'bg-accent-50 text-accent-800 border border-accent-200'
             : 'bg-red-50 text-red-800 border border-red-200'
         }`}>
           {message}
@@ -244,7 +244,7 @@ export default function AdminRegistrations() {
                         <span className="text-gray-300">•</span>
                         <p className="text-xs text-gray-500">{candidate.email}</p>
                       </div>
-                      <p className="text-xs font-medium text-blue-600 mt-1">
+                      <p className="text-xs font-medium text-accent-600 mt-1">
                         {candidate.position}
                         {candidate.gender && (
                           <span className="text-gray-400 ml-1">({candidate.gender})</span>

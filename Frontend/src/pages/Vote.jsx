@@ -71,7 +71,7 @@ export default function Vote({ userEmail, token, onVoted }) {
       <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-2xl p-8 text-center max-w-md w-full border border-primary-100">
           <div className="mb-6">
-            <div className="w-20 h-20 bg-navy rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-20 h-20 bg-primary-800 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
               </svg>
@@ -89,7 +89,7 @@ export default function Vote({ userEmail, token, onVoted }) {
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-xl shadow-2xl overflow-hidden border border-primary-100">
-          <div className="bg-gradient-to-r from-navy to-primary-700 text-white p-6">
+          <div className="bg-gradient-to-r from-primary-800 to-primary-700 text-white p-6">
             <h2 className="text-3xl font-bold text-center">Cast Your Vote</h2>
             <p className="text-center mt-2 opacity-90">SAMCA Election 2025</p>
           </div>
@@ -97,35 +97,42 @@ export default function Vote({ userEmail, token, onVoted }) {
           <form onSubmit={handleSubmit} className="p-6">
             <div className="grid gap-8">
               {positions.map(position => (
-                <div key={position} className="bg-primary-50 rounded-lg p-6 border-l-4 border-navy">
+                <div key={position} className="bg-primary-50 rounded-lg p-6 border-l-4 border-primary-800">
                   <h4 className="text-xl font-semibold text-text-primary mb-4 capitalize">
                     {position.replace(/\b\w/g, l => l.toUpperCase())}
                   </h4>
-                  <div className="space-y-3">
-                    {candidates.filter(c => c.position === position).map(c => (
-                      <label key={c._id} className="flex items-center p-3 bg-white rounded-lg border-2 border-primary-200 hover:border-accent-400 transition-all cursor-pointer">
-                        <input
-                          type="radio"
-                          name={position}
-                          value={c._id}
-                          checked={votes[position] === c._id}
-                          onChange={() => handleVoteChange(position, c._id)}
-                          className="w-4 h-4 text-accent-600 focus:ring-accent-500 focus:ring-2"
-                          required
-                        />
-                        {c.photoUrl && (
-                          <img
-                            src={c.photoUrl}
-                            alt={c.name}
-                            className="ml-4 w-12 h-12 object-cover rounded-full border border-primary-200 shadow-sm"
-                            loading="lazy"
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    {candidates.filter(c => c.position === position).map(c => {
+                      const selected = votes[position] === c._id;
+                      return (
+                        <label
+                          key={c._id}
+                          className={`flex flex-col items-center p-6 bg-white rounded-2xl border-2 transition-all cursor-pointer shadow-sm 
+                            ${selected ? 'border-accent-500 ring-2 ring-accent-300 shadow-lg' : 'border-primary-200 hover:border-accent-400'}`}
+                        >
+                          <input
+                            type="radio"
+                            name={position}
+                            value={c._id}
+                            checked={selected}
+                            onChange={() => handleVoteChange(position, c._id)}
+                            className="hidden"
+                            required
                           />
-                        )}
-                        <span className="ml-4 text-text-primary font-medium">
-                          {c.name} {c.gender ? `(${c.gender})` : ''}
-                        </span>
-                      </label>
-                    ))}
+                          {c.photoUrl && (
+                            <img
+                              src={c.photoUrl}
+                              alt={c.name}
+                              className={`w-24 h-24 object-cover rounded-full border-4 mb-4 ${selected ? 'border-accent-500' : 'border-primary-200'}`}
+                              loading="lazy"
+                            />
+                          )}
+                          <span className="text-text-primary font-semibold text-lg text-center">
+                            {c.name} {c.gender ? `(${c.gender})` : ''}
+                          </span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
@@ -134,7 +141,7 @@ export default function Vote({ userEmail, token, onVoted }) {
             <div className="mt-8 text-center">
               <button 
                 type="submit"
-                className="bg-gradient-to-r from-navy to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
+                className="bg-gradient-to-r from-primary-800 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
               >
                 Submit Vote
               </button>
