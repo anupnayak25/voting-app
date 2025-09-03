@@ -175,7 +175,7 @@ function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Link 
               to="/register" 
-              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-xl bg-primary-800 text-white shadow-lg hover:bg-primary-700 transform hover:scale-105 transition-all duration-200"
+              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-xl bg-primary-800 text-white shadow-lg hover:bg-white transform hover:scale-105 transition-all duration-200"
             >
               <svg className="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -184,7 +184,7 @@ function Home() {
             </Link>
             <Link 
               to="/vote" 
-              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-xl bg-accent-600 text-white shadow-lg hover:bg-accent-700 transform hover:scale-105 transition-all duration-200"
+              className="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-xl bg-blue-600 text-white shadow-lg hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-200"
             >
               <svg className="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
