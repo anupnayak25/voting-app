@@ -1,13 +1,13 @@
 // File upload middleware
 const fileUpload = require('./config/expressFileUpload');
-app.use(fileUpload);
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
-
+app.use(fileUpload);
 // CORS: allow all origins
 app.use(cors({
   origin: (origin, cb) => cb(null, true), // reflect any origin
