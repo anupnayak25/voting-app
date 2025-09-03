@@ -1,25 +1,42 @@
+
 const Candidate = require('../models/Candidate');
 const Settings = require('../models/Settings');
+const cloudinary = require('../config/cloudinary');
 
 exports.registerCandidate = async (req, res) => {
-  // Check registration due date
-  const settings = await Settings.getSettings();
-  if (settings.registrationDueDate && new Date() > settings.registrationDueDate) {
-    return res.status(403).json({ message: 'Registration deadline has passed' });
-  }
+  try {
+    // Check registration due date
+    const settings = await Settings.getSettings();
+    if (settings.registrationDueDate && new Date() > settings.registrationDueDate) {
+      return res.status(403).json({ message: 'Registration deadline has passed' });
+    }
 
-  const { name, usn, email, position, gender } = req.body;
-  if (!name || !usn || !email || !position) return res.status(400).json({ message: 'All fields required' });
-  
-  // Check if candidate already exists with same email or USN
-  const existingCandidate = await Candidate.findOne({ $or: [{ email }, { usn }] });
-  if (existingCandidate) {
-    return res.status(400).json({ message: 'Candidate with this email or USN already exists' });
+    const { name, usn, email, position, gender } = req.body;
+    if (!name || !usn || !email || !position) return res.status(400).json({ message: 'All fields required' });
+
+    // Check if candidate already exists with same email or USN
+    const existingCandidate = await Candidate.findOne({ $or: [{ email }, { usn }] });
+    if (existingCandidate) {
+      return res.status(400).json({ message: 'Candidate with this email or USN already exists' });
+    }
+
+    let photoUrl = null;
+    if (req.files && req.files.photo) {
+      // Upload file to Cloudinary
+      const file = req.files.photo;
+      const uploadRes = await cloudinary.uploader.upload(file.tempFilePath, {
+        folder: 'samca_candidates',
+        resource_type: 'image',
+      });
+      photoUrl = uploadRes.secure_url;
+    }
+
+    const candidate = await Candidate.create({ name, usn, email, position, gender, photoUrl });
+    res.json({ message: 'Candidate registered and pending approval', candidate });
+  } catch (err) {
+    console.error('Error registering candidate:', err.message);
+    res.status(500).json({ message: 'Server error registering candidate' });
   }
-  
-  const photoUrl = req.file ? `/uploads/${req.file.filename}` : null;
-  const candidate = await Candidate.create({ name, usn, email, position, gender, photoUrl });
-  res.json({ message: 'Candidate registered and pending approval', candidate });
 };
 
 exports.listPending = async (req, res) => {

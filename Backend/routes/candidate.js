@@ -3,21 +3,8 @@ const router = express.Router();
 const candidateController = require('../controllers/candidateController');
 const adminController = require('../controllers/adminController');
 const { adminAuth } = require('./admin'); // now a no-op
-const multer = require('multer');
-const path = require('path');
-
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '..', 'uploads'));
-  },
-  filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname);
-    cb(null, `${Date.now()}${ext}`);
-  }
-});
-const upload = multer({ storage });
-router.post('/register', upload.single('photo'), candidateController.registerCandidate);
+// Cloudinary handles image upload, no multer needed
+router.post('/register', candidateController.registerCandidate);
 router.get('/pending', adminAuth, candidateController.listPending);
 router.get('/all', adminAuth, candidateController.listAll);
 router.post('/:id/approve', adminAuth, candidateController.approveCandidate);
