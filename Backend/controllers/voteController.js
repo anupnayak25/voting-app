@@ -28,12 +28,6 @@ exports.submitVote = async (req, res) => {
   const { votes } = req.body; // votes: [{ position, candidateId }]
   const email = req.user?.email; // provided by auth middleware
   if (!email) return res.status(401).json({ message: 'Unauthorized' });
-  const now = new Date();
-  const settings = await Settings.getSettings();
-  const start = settings.votingStart;
-  const end = settings.votingEnd;
-  if (start && now < start) return res.status(403).json({ message: 'Voting has not started yet.' });
-  if (end && now > end) return res.status(403).json({ message: 'Voting window has closed.' });
   const user = await User.findOne({ email });
   if (!user || user.hasVoted) {
     return res.status(403).json({ message: 'Already voted or user not found.' });

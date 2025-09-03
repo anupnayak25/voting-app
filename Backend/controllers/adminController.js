@@ -27,21 +27,33 @@ exports.getDueDate = async (req, res) => {
 // Voting window management
 exports.setVotingWindow = async (req, res) => {
   try {
-    const { start, end } = req.body;
+    const { start, end, timezone } = req.body;
     if (!start) return res.status(400).json({ message: 'Start date required' });
+    
+    // Handle datetime-local input which comes without timezone info
+    // Assume local time if no timezone is provided
     const startDate = new Date(start);
     if (isNaN(startDate.getTime())) return res.status(400).json({ message: 'Invalid start date' });
+    
     let endDate;
     if (end) {
       endDate = new Date(end);
       if (isNaN(endDate.getTime())) return res.status(400).json({ message: 'Invalid end date' });
       if (endDate <= startDate) return res.status(400).json({ message: 'End must be after start' });
     }
+    
     const settings = await Settings.getSettings();
     settings.votingStart = startDate;
     settings.votingEnd = endDate;
     await settings.save();
-    console.log('[settings] votingWindow updated ->', { start: settings.votingStart.toISOString(), end: settings.votingEnd ? settings.votingEnd.toISOString() : null });
+    
+    console.log('[settings] votingWindow updated ->', { 
+      start: settings.votingStart.toISOString(), 
+      end: settings.votingEnd ? settings.votingEnd.toISOString() : null,
+      startLocal: start,
+      endLocal: end
+    });
+    
     res.json({ message: 'Voting window updated', start: settings.votingStart, end: settings.votingEnd || null });
   } catch (err) {
     console.error('Error saving voting window:', err.message);

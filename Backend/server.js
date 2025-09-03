@@ -8,22 +8,28 @@ const cors = require('cors');
 
 const app = express();
 app.use(fileUpload);
-// CORS: allow all origins
+// TEMP: Wide-open CORS (allow all origins). WARNING: Do NOT use in production.
+// Replace this with a restrictive list before deploying publicly.
 app.use(cors({
-  origin: (origin, cb) => cb(null, true), // reflect any origin
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  // Removed 'x-admin-pass' since admin header auth is disabled
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 200
+  origin: '*', // reflect all origins
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'Accept',
+    'Origin',
+    'X-Requested-With'
+  ],
+  exposedHeaders: ['Content-Length'],
+  credentials: false, // can't be true when origin is '*'
+  optionsSuccessStatus: 204
 }));
-// Express 5 with path-to-regexp v6 can throw on '*' pattern; CORS middleware already handles preflight
-// Removed explicit app.options('*', cors());
+// Removed explicit app.options('*', cors()) because Express 5 path-to-regexp v6
+// can throw on '*' patterns; cors() middleware already handles preflight.
 
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
-
 
 const authRoutes = require('./routes/auth');
 const voteRoutes = require('./routes/vote');
@@ -32,6 +38,8 @@ const adminRoutes = adminModule.router || adminModule;
 const { adminAuth } = adminModule;
 const candidateRoutes = require('./routes/candidate');
 const positionRoutes = require('./routes/position');
+
+app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
 app.use('/uploads', express.static('uploads'));
 app.use('/api/auth', authRoutes);

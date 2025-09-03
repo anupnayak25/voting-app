@@ -9,18 +9,14 @@ function generateOTP() {
 
 exports.requestOTP = async (req, res) => {
   const { email } = req.body;
-  if (!email) return res.status(400).json({ message: 'Email required' });
-
-  // Voting window enforcement (optional end)
-  const now = new Date();
-  const settings = await Settings.getSettings();
-  const start = settings.votingStart;
-  const end = settings.votingEnd;
-  if (start && now < start) return res.status(403).json({ message: 'Voting has not started yet.' });
-  if (end && now > end) return res.status(403).json({ message: 'Voting window has closed.' });
+  if (!email) {
+    console.log('[auth][requestOTP] 400 missing email');
+    return res.status(400).json({ message: 'Email required' });
+  }
 
   let user = await User.findOne({ email });
   if (user && user.hasVoted) {
+    console.log('[auth][requestOTP] 403 already voted', { email });
     return res.status(403).json({ message: 'You have already voted. OTP not sent.' });
   }
 
@@ -38,6 +34,7 @@ exports.requestOTP = async (req, res) => {
       subject: 'Your Voting OTP',
       text: `Your OTP for voting is: ${otp}`
     });
+    console.log('[auth][requestOTP] 200 OTP sent', { email, expires: otpExpires.toISOString() });
     res.json({ message: 'OTP sent to email.' });
   } catch (err) {
     console.error('[mailer] sendMail error:', err);
@@ -47,19 +44,15 @@ exports.requestOTP = async (req, res) => {
 
 exports.verifyOTP = async (req, res) => {
   const { email, otp } = req.body;
-  const now = new Date();
-  const settings = await Settings.getSettings();
-  const start = settings.votingStart;
-  const end = settings.votingEnd;
-  if (start && now < start) return res.status(403).json({ message: 'Voting has not started yet.' });
-  if (end && now > end) return res.status(403).json({ message: 'Voting window has closed.' });
   const user = await User.findOne({ email });
   if (!user || user.otp !== otp || user.otpExpires < new Date()) {
+    console.log('[auth][verifyOTP] 400 invalid/expired otp', { email, providedOtp: otp, userExists: !!user });
     return res.status(400).json({ message: 'Invalid or expired OTP.' });
   }
   user.otp = null;
   user.otpExpires = null;
   await user.save();
   const token = jwt.sign({ email: user.email, uid: user._id }, process.env.JWT_SECRET || 'devsecret', { expiresIn: '2h' });
+  console.log('[auth][verifyOTP] 200 otp verified', { email });
   res.json({ message: 'OTP verified.', token });
 };
