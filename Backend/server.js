@@ -45,6 +45,8 @@ const { adminAuth } = adminModule;
 const candidateRoutes = require("./routes/candidate");
 const positionRoutes = require("./routes/position");
 
+app.get("/", (req, res) => res.send("Voting App API is running"));
+
 app.get("/api/health", (req, res) => res.json({ status: "ok", timestamp: new Date().toISOString() }));
 
 app.use("/uploads", express.static("uploads"));
