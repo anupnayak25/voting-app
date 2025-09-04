@@ -1,13 +1,14 @@
-import React from 'react';
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import React from "react";
+import { Outlet, NavLink, useLocation } from "react-router-dom";
 
 export default function AdminLayout() {
   const location = useLocation();
-  
+
   const navItems = [
-    { path: '/samca2k25-admin', label: 'Settings', exact: true },
-    { path: '/samca2k25-admin/registrations', label: 'Registrations' },
-    { path: '/samca2k25-admin/analytics', label: 'Analytics' }
+    { path: "/samca2k25-admin", label: "Settings", exact: true },
+    { path: "/samca2k25-admin/registrations", label: "Registrations" },
+    { path: "/samca2k25-admin/analytics", label: "Analytics" },
+    { path: "/samca2k25-admin/voted-users", label: "Voted Users" },
   ];
 
   return (
@@ -32,20 +33,19 @@ export default function AdminLayout() {
           <div className="border-b border-primary-200 mb-6">
             <nav className="-mb-px flex space-x-8" aria-label="Tabs">
               {navItems.map((item) => {
-                const isActive = item.exact 
+                const isActive = item.exact
                   ? location.pathname === item.path
-                  : location.pathname.startsWith(item.path) && item.path !== '/samca2k25-admin';
-                
+                  : location.pathname.startsWith(item.path) && item.path !== "/samca2k25-admin";
+
                 return (
                   <NavLink
                     key={item.path}
                     to={item.path}
                     className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
                       isActive
-                        ? 'border-primary-800 text-primary-800'
-                        : 'border-transparent text-text-secondary hover:text-text-primary hover:border-primary-300'
-                    }`}
-                  >
+                        ? "border-primary-800 text-primary-800"
+                        : "border-transparent text-text-secondary hover:text-text-primary hover:border-primary-300"
+                    }`}>
                     {item.label}
                   </NavLink>
                 );

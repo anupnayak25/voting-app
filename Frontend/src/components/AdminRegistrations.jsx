@@ -191,8 +191,8 @@ export default function AdminRegistrations() {
               onClick={() => setFilter(key)}
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 filter === key
-                  ? "bg-accent-100 text-accent-700 border border-accent-200"
-                  : "text-gray-500 hover:text-gray-700 border border-transparent"
+                  ? "bg-accent-100 text-accent-700 border border-accent-200 hover:bg-accent-200"
+                  : "text-white bg-primary-900 hover:text-accent-700 hover:bg-accent-100 border border-transparent"
               }`}>
               {label} ({count})
             </button>
