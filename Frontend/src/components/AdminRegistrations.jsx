@@ -8,6 +8,7 @@ export default function AdminRegistrations() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [filter, setFilter] = useState('all'); // all, pending, approved, rejected
+  const [actionId, setActionId] = useState(null); // candidate id currently being acted on
 
   const fetchAllCandidates = async () => {
     setLoading(true);
@@ -20,7 +21,7 @@ export default function AdminRegistrations() {
       } else {
         setMessage(data.message || 'Error loading candidates');
       }
-    } catch (e) {
+  } catch {
       setMessage('Network error loading candidates');
     } finally {
       setLoading(false);
@@ -33,17 +34,23 @@ export default function AdminRegistrations() {
 
   const handleAction = async (id, action) => {
     setMessage('');
+    setActionId(id);
     try {
   const res = await fetch(`${CANDIDATE_API}/${id}/${action}`, { method: 'POST' });
       const data = await res.json();
       if (res.ok) {
         setMessage(`Candidate ${action}d successfully`);
-        fetchAllCandidates();
+        // Update only the affected candidate locally
+        setCandidates(prev => prev.map(c => 
+          c._id === id ? { ...c, status: action === 'approve' ? 'approved' : 'rejected' } : c
+        ));
       } else {
         setMessage(data.message || `Error ${action}ing candidate`);
       }
-    } catch (error) {
+  } catch {
       setMessage(`Network error ${action}ing candidate`);
+    } finally {
+      setActionId(null);
     }
   };
 
@@ -53,17 +60,21 @@ export default function AdminRegistrations() {
     }
     
     setMessage('');
+  setActionId(id);
     try {
   const res = await fetch(`${CANDIDATE_API}/${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (res.ok) {
         setMessage('Candidate deleted successfully');
-        fetchAllCandidates();
+    // Remove candidate locally
+    setCandidates(prev => prev.filter(c => c._id !== id));
       } else {
         setMessage(data.message || 'Error deleting candidate');
       }
-    } catch (error) {
+  } catch {
       setMessage('Network error deleting candidate');
+  } finally {
+    setActionId(null);
     }
   };
 
@@ -100,24 +111,27 @@ export default function AdminRegistrations() {
       {candidate.status !== 'approved' && (
         <button
           onClick={() => handleAction(candidate._id, 'approve')}
-          className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white bg-accent-600 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500"
+          disabled={actionId === candidate._id}
+          className={`inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 ${actionId === candidate._id ? 'bg-accent-400 cursor-not-allowed' : 'bg-accent-600 hover:bg-accent-700'}`}
         >
-          Approve
+          {actionId === candidate._id ? '...' : 'Approve'}
         </button>
       )}
       {candidate.status !== 'rejected' && (
         <button
           onClick={() => handleAction(candidate._id, 'reject')}
-          className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+          disabled={actionId === candidate._id}
+          className={`inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 ${actionId === candidate._id ? 'bg-yellow-400 cursor-not-allowed' : 'bg-yellow-600 hover:bg-yellow-700'}`}
         >
-          Reject
+          {actionId === candidate._id ? '...' : 'Reject'}
         </button>
       )}
       <button
         onClick={() => handleDelete(candidate._id)}
-        className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+        disabled={actionId === candidate._id}
+        className={`inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${actionId === candidate._id ? 'bg-red-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'}`}
       >
-        Delete
+        {actionId === candidate._id ? '...' : 'Delete'}
       </button>
     </div>
   );
