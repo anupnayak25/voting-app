@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 const CANDIDATE_API = `${API_BASE}/candidate`;
 
 export default function AdminRegistrations() {
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState('');
-  const [filter, setFilter] = useState('all'); // all, pending, approved, rejected
+  const [message, setMessage] = useState("");
+  const [filter, setFilter] = useState("all"); // all, pending, approved, rejected
   const [actionId, setActionId] = useState(null); // candidate id currently being acted on
 
   const fetchAllCandidates = async () => {
     setLoading(true);
     try {
-  const res = await fetch(`${CANDIDATE_API}/all`);
+      const res = await fetch(`${CANDIDATE_API}/all`);
       const data = await res.json();
       if (res.ok) {
         setCandidates(data.candidates);
-        setMessage('');
+        setMessage("");
       } else {
-        setMessage(data.message || 'Error loading candidates');
+        setMessage(data.message || "Error loading candidates");
       }
-  } catch {
-      setMessage('Network error loading candidates');
+    } catch {
+      setMessage("Network error loading candidates");
     } finally {
       setLoading(false);
     }
@@ -33,21 +33,21 @@ export default function AdminRegistrations() {
   }, []);
 
   const handleAction = async (id, action) => {
-    setMessage('');
+    setMessage("");
     setActionId(id);
     try {
-  const res = await fetch(`${CANDIDATE_API}/${id}/${action}`, { method: 'POST' });
+      const res = await fetch(`${CANDIDATE_API}/${id}/${action}`, { method: "POST" });
       const data = await res.json();
       if (res.ok) {
         setMessage(`Candidate ${action}d successfully`);
         // Update only the affected candidate locally
-        setCandidates(prev => prev.map(c => 
-          c._id === id ? { ...c, status: action === 'approve' ? 'approved' : 'rejected' } : c
-        ));
+        setCandidates((prev) =>
+          prev.map((c) => (c._id === id ? { ...c, status: action === "approve" ? "approved" : "rejected" } : c))
+        );
       } else {
         setMessage(data.message || `Error ${action}ing candidate`);
       }
-  } catch {
+    } catch {
       setMessage(`Network error ${action}ing candidate`);
     } finally {
       setActionId(null);
@@ -55,38 +55,38 @@ export default function AdminRegistrations() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to delete this candidate? This action cannot be undone.')) {
+    if (!confirm("Are you sure you want to delete this candidate? This action cannot be undone.")) {
       return;
     }
-    
-    setMessage('');
-  setActionId(id);
+
+    setMessage("");
+    setActionId(id);
     try {
-  const res = await fetch(`${CANDIDATE_API}/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${CANDIDATE_API}/${id}`, { method: "DELETE" });
       const data = await res.json();
       if (res.ok) {
-        setMessage('Candidate deleted successfully');
-    // Remove candidate locally
-    setCandidates(prev => prev.filter(c => c._id !== id));
+        setMessage("Candidate deleted successfully");
+        // Remove candidate locally
+        setCandidates((prev) => prev.filter((c) => c._id !== id));
       } else {
-        setMessage(data.message || 'Error deleting candidate');
+        setMessage(data.message || "Error deleting candidate");
       }
-  } catch {
-      setMessage('Network error deleting candidate');
-  } finally {
-    setActionId(null);
+    } catch {
+      setMessage("Network error deleting candidate");
+    } finally {
+      setActionId(null);
     }
   };
 
-  const filteredCandidates = candidates.filter(candidate => {
-    if (filter === 'all') return true;
+  const filteredCandidates = candidates.filter((candidate) => {
+    if (filter === "all") return true;
     return candidate.status === filter;
   });
 
   const getStatusCounts = () => {
-    const pending = candidates.filter(c => c.status === 'pending').length;
-    const approved = candidates.filter(c => c.status === 'approved').length;
-    const rejected = candidates.filter(c => c.status === 'rejected').length;
+    const pending = candidates.filter((c) => c.status === "pending").length;
+    const approved = candidates.filter((c) => c.status === "approved").length;
+    const rejected = candidates.filter((c) => c.status === "rejected").length;
     return { pending, approved, rejected, total: candidates.length };
   };
 
@@ -94,11 +94,11 @@ export default function AdminRegistrations() {
 
   const StatusBadge = ({ status }) => {
     const styles = {
-      pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      approved: 'bg-accent-100 text-accent-800 border-accent-200',
-      rejected: 'bg-red-100 text-red-800 border-red-200'
+      pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      approved: "bg-accent-100 text-accent-800 border-accent-200",
+      rejected: "bg-red-100 text-red-800 border-red-200",
     };
-    
+
     return (
       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full border ${styles[status]}`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -108,30 +108,33 @@ export default function AdminRegistrations() {
 
   const ActionButtons = ({ candidate }) => (
     <div className="flex space-x-2">
-      {candidate.status !== 'approved' && (
+      {candidate.status !== "approved" && (
         <button
-          onClick={() => handleAction(candidate._id, 'approve')}
+          onClick={() => handleAction(candidate._id, "approve")}
           disabled={actionId === candidate._id}
-          className={`inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 ${actionId === candidate._id ? 'bg-accent-400 cursor-not-allowed' : 'bg-accent-600 hover:bg-accent-700'}`}
-        >
-          {actionId === candidate._id ? '...' : 'Approve'}
+          className={`inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 ${
+            actionId === candidate._id ? "bg-accent-400 cursor-not-allowed" : "bg-accent-600 hover:bg-accent-700"
+          }`}>
+          {actionId === candidate._id ? "..." : "Approve"}
         </button>
       )}
-      {candidate.status !== 'rejected' && (
+      {candidate.status !== "rejected" && (
         <button
-          onClick={() => handleAction(candidate._id, 'reject')}
+          onClick={() => handleAction(candidate._id, "reject")}
           disabled={actionId === candidate._id}
-          className={`inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 ${actionId === candidate._id ? 'bg-yellow-400 cursor-not-allowed' : 'bg-yellow-600 hover:bg-yellow-700'}`}
-        >
-          {actionId === candidate._id ? '...' : 'Reject'}
+          className={`inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 ${
+            actionId === candidate._id ? "bg-yellow-400 cursor-not-allowed" : "bg-yellow-600 hover:bg-yellow-700"
+          }`}>
+          {actionId === candidate._id ? "..." : "Reject"}
         </button>
       )}
       <button
         onClick={() => handleDelete(candidate._id)}
         disabled={actionId === candidate._id}
-        className={`inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${actionId === candidate._id ? 'bg-red-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'}`}
-      >
-        {actionId === candidate._id ? '...' : 'Delete'}
+        className={`inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${
+          actionId === candidate._id ? "bg-red-400 cursor-not-allowed" : "bg-red-600 hover:bg-red-700"
+        }`}>
+        {actionId === candidate._id ? "..." : "Delete"}
       </button>
     </div>
   );
@@ -162,10 +165,14 @@ export default function AdminRegistrations() {
           </div>
           <button
             onClick={fetchAllCandidates}
-            className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
+            className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
             <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
             </svg>
             Refresh
           </button>
@@ -174,20 +181,19 @@ export default function AdminRegistrations() {
         {/* Status Filters */}
         <div className="flex space-x-4 mb-4">
           {[
-            { key: 'all', label: 'All', count: counts.total },
-            { key: 'pending', label: 'Pending', count: counts.pending },
-            { key: 'approved', label: 'Approved', count: counts.approved },
-            { key: 'rejected', label: 'Rejected', count: counts.rejected }
+            { key: "all", label: "All", count: counts.total },
+            { key: "pending", label: "Pending", count: counts.pending },
+            { key: "approved", label: "Approved", count: counts.approved },
+            { key: "rejected", label: "Rejected", count: counts.rejected },
           ].map(({ key, label, count }) => (
             <button
               key={key}
               onClick={() => setFilter(key)}
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 filter === key
-                  ? 'bg-accent-100 text-accent-700 border border-accent-200'
-                  : 'text-gray-500 hover:text-gray-700 border border-transparent'
-              }`}
-            >
+                  ? "bg-accent-100 text-accent-700 border border-accent-200"
+                  : "text-gray-500 hover:text-gray-700 border border-transparent"
+              }`}>
               {label} ({count})
             </button>
           ))}
@@ -196,11 +202,12 @@ export default function AdminRegistrations() {
 
       {/* Message Display */}
       {message && (
-        <div className={`mb-6 p-4 rounded-md ${
-          message.includes('successfully')
-            ? 'bg-accent-50 text-accent-800 border border-accent-200'
-            : 'bg-red-50 text-red-800 border border-red-200'
-        }`}>
+        <div
+          className={`mb-6 p-4 rounded-md ${
+            message.includes("successfully")
+              ? "bg-accent-50 text-accent-800 border border-accent-200"
+              : "bg-red-50 text-red-800 border border-red-200"
+          }`}>
           {message}
         </div>
       )}
@@ -210,16 +217,20 @@ export default function AdminRegistrations() {
         {filteredCandidates.length === 0 ? (
           <div className="text-center py-12">
             <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              />
             </svg>
             <h3 className="mt-2 text-sm font-medium text-gray-900">
-              {filter === 'all' ? 'No candidates yet' : `No ${filter} candidates`}
+              {filter === "all" ? "No candidates yet" : `No ${filter} candidates`}
             </h3>
             <p className="mt-1 text-sm text-gray-500">
-              {filter === 'all' 
-                ? 'Candidates will appear here once they register'
-                : `No candidates with ${filter} status found`
-              }
+              {filter === "all"
+                ? "Candidates will appear here once they register"
+                : `No candidates with ${filter} status found`}
             </p>
           </div>
         ) : (
@@ -239,18 +250,21 @@ export default function AdminRegistrations() {
                       ) : (
                         <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
                           <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
                           </svg>
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Candidate Info */}
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center space-x-3">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {candidate.name}
-                        </p>
+                        <p className="text-sm font-medium text-gray-900 truncate">{candidate.name}</p>
                         <StatusBadge status={candidate.status} />
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
@@ -260,13 +274,11 @@ export default function AdminRegistrations() {
                       </div>
                       <p className="text-xs font-medium text-accent-600 mt-1">
                         {candidate.position}
-                        {candidate.gender && (
-                          <span className="text-gray-400 ml-1">({candidate.gender})</span>
-                        )}
+                        {candidate.gender && <span className="text-gray-400 ml-1">({candidate.gender})</span>}
                       </p>
                     </div>
                   </div>
-                  
+
                   {/* Actions */}
                   <div className="flex items-center space-x-2">
                     <ActionButtons candidate={candidate} />
