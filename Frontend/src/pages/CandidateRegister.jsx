@@ -19,8 +19,19 @@ export default function CandidateRegister() {
   const fetchPositions = async () => {
     try {
       const response = await fetch(`${POSITION_API}`);
+      const contentType = response.headers.get('content-type') || '';
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Position fetch failed', response.status, text.slice(0, 200));
+        throw new Error(`HTTP ${response.status}`);
+      }
+      if (!contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('Expected JSON but got:', contentType, text.slice(0, 200));
+        throw new Error('Non-JSON response (likely SPA fallback; rewrite not applied)');
+      }
       const data = await response.json();
-      setPositions(data.positions);
+      setPositions(data.positions || []);
     } catch (error) {
       console.error('Error fetching positions:', error);
       setMessage('Error loading positions');
@@ -45,7 +56,7 @@ export default function CandidateRegister() {
         setForm({ name: '', usn: '', email: '', position: '', gender: '' });
         setPhoto(null);
       } else setMessage(data.message || 'Error registering candidate.');
-    } catch (err) {
+    } catch (err) { // eslint-disable-line no-unused-vars
       setMessage('Network error.');
     } finally {
       setSubmitting(false);
