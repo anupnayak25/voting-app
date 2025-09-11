@@ -12,6 +12,7 @@ export default function Vote({ userEmail, token, onVoted }) {
   const [submitted, setSubmitted] = useState(false);
   const [redirectSeconds, setRedirectSeconds] = useState(5);
   const [loading, setLoading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({}); // { [position]: true }
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,11 +26,26 @@ export default function Vote({ userEmail, token, onVoted }) {
 
   const handleVoteChange = (position, candidateId) => {
     setVotes({ ...votes, [position]: candidateId });
+    // Clear validation error for this position when a choice is made
+    if (validationErrors[position]) {
+      const next = { ...validationErrors };
+      delete next[position];
+      setValidationErrors(next);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
+    // Validate: ensure a candidate is selected for each position
+    const missing = positions.filter((p) => !votes[p]);
+    if (missing.length > 0) {
+      const errs = missing.reduce((acc, p) => ({ ...acc, [p]: true }), {});
+      setValidationErrors(errs);
+      setMessage('Please select a candidate for all positions.');
+      return; // Do not proceed
+    }
+
     setLoading(true);
     const voteArr = Object.entries(votes).map(([position, candidateId]) => ({ position, candidateId }));
     try {
@@ -55,13 +71,13 @@ export default function Vote({ userEmail, token, onVoted }) {
   // After submission: countdown, clear session then redirect
   useEffect(() => {
     if (!submitted) return;
-    // Clear auth/session via callback immediately so user can't vote again in UI
-    if (onVoted) onVoted();
     const interval = setInterval(() => {
       setRedirectSeconds(s => {
         if (s <= 1) {
           clearInterval(interval);
-          navigate('/vote'); // will force login since auth cleared
+          // Now clear auth/session and then redirect
+          if (onVoted) onVoted();
+          navigate('/vote');
           return 0;
         }
         return s - 1;
@@ -98,13 +114,16 @@ export default function Vote({ userEmail, token, onVoted }) {
             <p className="text-center mt-2 opacity-90">SAMCA Election 2025</p>
           </div>
           
-          <form onSubmit={handleSubmit} className="p-6">
+          <form onSubmit={handleSubmit} noValidate className="p-6">
             <div className="grid gap-8">
               {positions.map(position => (
-                <div key={position} className="bg-primary-50 rounded-lg p-6 border-l-4 border-primary-800">
+                <div key={position} className={`bg-primary-50 rounded-lg p-6 border-l-4 ${validationErrors[position] ? 'border-red-500' : 'border-primary-800'}`}>
                   <h4 className="text-xl font-semibold text-text-primary mb-4 capitalize">
                     {position.replace(/\b\w/g, l => l.toUpperCase())}
                   </h4>
+                  {validationErrors[position] && (
+                    <p className="text-sm text-red-600 -mt-2 mb-4">Please select a candidate for this position.</p>
+                  )}
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     {candidates.filter(c => c.position === position).map(c => {
                       const selected = votes[position] === c._id;
@@ -121,7 +140,7 @@ export default function Vote({ userEmail, token, onVoted }) {
                             checked={selected}
                             onChange={() => handleVoteChange(position, c._id)}
                             className="hidden"
-                            required
+                            aria-invalid={!!validationErrors[position]}
                           />
                           {c.photoUrl && (
                             <img
