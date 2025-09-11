@@ -10,19 +10,44 @@ export default function AdminSettings() {
   const [registrationDueDate, setRegistrationDueDate] = useState('');
   const [savingDueDate, setSavingDueDate] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [votingEnabled, setVotingEnabled] = useState(false);
+  const [savingToggle, setSavingToggle] = useState(false);
 
   const fetchVotingWindow = async () => {
     try {
-  const res = await fetch(`${ADMIN_API}/get-voting-window`);
+      const res = await fetch(`${ADMIN_API}/get-voting-window`);
       if (res.ok) {
         const data = await res.json();
         setVotingWindow({ 
           start: data.start ? data.start.slice(0,16) : '', 
           end: data.end ? data.end.slice(0,16) : '' 
         });
+        setVotingEnabled(!!data.votingEnabled);
       }
     } catch (error) {
       setMessage('Error loading voting window');
+    }
+  };
+  const handleToggleVoting = async () => {
+    setSavingToggle(true);
+    setMessage('');
+    try {
+      const res = await fetch(`${ADMIN_API}/set-voting-enabled`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: !votingEnabled })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setVotingEnabled(data.votingEnabled);
+        setMessage('Voting status updated');
+      } else {
+        setMessage(data.message || 'Error updating voting status');
+      }
+    } catch (error) {
+      setMessage('Network error updating voting status');
+    } finally {
+      setSavingToggle(false);
     }
   };
 
@@ -134,6 +159,30 @@ export default function AdminSettings() {
       )}
 
       <div className="space-y-8">
+        {/* Voting Toggle Section */}
+        <div className="bg-gray-50 p-6 rounded-lg flex items-center justify-between">
+          <div>
+            <h3 className="text-md font-semibold text-gray-900">Voting Status</h3>
+            <p className="text-sm text-gray-600 mt-1">Enable or disable voting for all users</p>
+          </div>
+          <button
+            onClick={handleToggleVoting}
+            disabled={savingToggle}
+            className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white ${votingEnabled ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 hover:bg-gray-500'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            {savingToggle ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Saving...
+              </>
+            ) : (
+              votingEnabled ? 'Voting Enabled' : 'Voting Disabled'
+            )}
+          </button>
+        </div>
         {/* Registration Due Date Section */}
         <div className="bg-gray-50 p-6 rounded-lg">
           <div className="mb-4">

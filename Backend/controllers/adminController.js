@@ -64,7 +64,28 @@ exports.setVotingWindow = async (req, res) => {
 
 exports.getVotingWindow = async (req, res) => {
   const settings = await Settings.getSettings();
-  res.json({ start: settings.votingStart || null, end: settings.votingEnd || null });
+  res.json({ start: settings.votingStart || null, end: settings.votingEnd || null, votingEnabled: settings.votingEnabled });
+};
+
+// Toggle voting enabled flag (manual override independent of time window)
+exports.setVotingEnabled = async (req, res) => {
+  try {
+    const { enabled } = req.body;
+    if (typeof enabled !== 'boolean') return res.status(400).json({ message: 'enabled boolean required' });
+    const settings = await Settings.getSettings();
+    settings.votingEnabled = enabled;
+    await settings.save();
+    console.log('[settings] votingEnabled set ->', enabled);
+    res.json({ message: 'Voting toggle updated', votingEnabled: settings.votingEnabled });
+  } catch (err) {
+    console.error('Error setting voting toggle:', err.message);
+    res.status(500).json({ message: 'Server error saving voting toggle' });
+  }
+};
+
+exports.getVotingEnabled = async (_req, res) => {
+  const settings = await Settings.getSettings();
+  res.json({ votingEnabled: settings.votingEnabled });
 };
 
 // Candidate management

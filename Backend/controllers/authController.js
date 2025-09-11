@@ -17,6 +17,12 @@ exports.requestOTP = async (req, res) => {
     return res.status(400).json({ message: "Email required" });
   }
 
+  // Check votingEnabled flag
+  const settings = await Settings.getSettings();
+  if (!settings.votingEnabled) {
+    return res.status(403).json({ message: "Voting has not started yet." });
+  }
+
   let user = await User.findOne({ email });
   if (user && user.hasVoted) {
     console.log("[auth][requestOTP] 403 already voted", { email });
