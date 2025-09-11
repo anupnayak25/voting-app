@@ -84,29 +84,28 @@ exports.getVotingAnalytics = async (req, res) => {
     const analytics = [];
 
     for (const position of positions) {
-      // Get all candidates for this position
-      const candidates = await Candidate.find({ 
-        position: position.name, 
-        status: 'approved' 
-      });
+      // Get all approved candidates for this position
+      const candidates = await Candidate.find({ position: position.name, status: 'approved' });
+      const candidateIds = candidates.map(c => c._id);
 
-      // Get vote counts for each candidate in this position
-      const candidateVotes = [];
-      
-      for (const candidate of candidates) {
-        const voteCount = await Vote.countDocuments({
-          'votes.candidate': candidate._id
-        });
-        
-        candidateVotes.push({
-          candidateId: candidate._id,
-          candidateName: candidate.name,
-          candidateUsn: candidate.usn,
-          voteCount
-        });
-      }
+      // Aggregate vote counts for all candidates in this position in one query
+      const voteCounts = await Vote.aggregate([
+        { $unwind: "$votes" },
+        { $match: { "votes.position": position.name, "votes.candidate": { $in: candidateIds } } },
+        { $group: { _id: "$votes.candidate", count: { $sum: 1 } } }
+      ]);
 
-      // Sort candidates by vote count (descending)
+      // Map candidateId to count
+      const voteCountMap = {};
+      voteCounts.forEach(vc => { voteCountMap[vc._id.toString()] = vc.count; });
+
+      const candidateVotes = candidates.map(c => ({
+        candidateId: c._id,
+        candidateName: c.name,
+        candidateUsn: c.usn,
+        voteCount: voteCountMap[c._id.toString()] || 0
+      }));
+
       candidateVotes.sort((a, b) => b.voteCount - a.voteCount);
 
       analytics.push({
@@ -128,44 +127,61 @@ exports.getVotingAnalytics = async (req, res) => {
 exports.getPositionAnalytics = async (req, res) => {
   try {
     const { positionName } = req.params;
-    
     const position = await Position.findOne({ name: positionName, isActive: true });
     if (!position) {
       return res.status(404).json({ message: 'Position not found' });
     }
 
-    // Get all candidates for this position
-    const candidates = await Candidate.find({ 
-      position: positionName, 
-      status: 'approved' 
+    // Get all approved candidates for this position
+    const candidates = await Candidate.find({ position: positionName, status: 'approved' });
+    const candidateIds = candidates.map(c => c._id);
+
+    // Aggregate vote counts and voter details for all candidates in this position
+    const voteAgg = await Vote.aggregate([
+      { $unwind: "$votes" },
+      { $match: { "votes.position": positionName, "votes.candidate": { $in: candidateIds } } },
+      { $group: {
+        _id: "$votes.candidate",
+        count: { $sum: 1 },
+        voters: { $push: "$user" },
+      } }
+    ]);
+
+    // Map candidateId to count and voters
+    const voteMap = {};
+    voteAgg.forEach(vc => {
+      voteMap[vc._id.toString()] = { count: vc.count, voters: vc.voters };
     });
 
-    // Get detailed vote information
-    const candidateAnalytics = [];
-    
-    for (const candidate of candidates) {
-      const votes = await Vote.find({
-        'votes.candidate': candidate._id
-      }).populate('user', 'email');
-
-      candidateAnalytics.push({
-        candidate: {
-          id: candidate._id,
-          name: candidate.name,
-          usn: candidate.usn,
-          email: candidate.email,
-          photoUrl: candidate.photoUrl
-        },
-        voteCount: votes.length,
-        votes: votes.map(vote => ({
-          voterId: vote.user._id,
-          voterEmail: vote.user.email,
-          timestamp: vote.createdAt
-        }))
-      });
+    // Get voter emails for all involved users
+    let allVoterIds = [];
+    voteAgg.forEach(vc => { allVoterIds = allVoterIds.concat(vc.voters); });
+    let voterEmailMap = {};
+    if (allVoterIds.length > 0) {
+      const User = require('../models/User');
+      const users = await User.find({ _id: { $in: allVoterIds } }).select('_id email');
+      users.forEach(u => { voterEmailMap[u._id.toString()] = u.email; });
     }
 
-    // Sort by vote count
+    const candidateAnalytics = candidates.map(c => {
+      const v = voteMap[c._id.toString()] || { count: 0, voters: [] };
+      return {
+        candidate: {
+          id: c._id,
+          name: c.name,
+          usn: c.usn,
+          email: c.email,
+          photoUrl: c.photoUrl
+        },
+        voteCount: v.count,
+        votes: v.voters.map(uid => ({
+          voterId: uid,
+          voterEmail: voterEmailMap[uid.toString()] || '',
+          // timestamp not available in aggregation, could be added if needed
+        }))
+      };
+    });
+
     candidateAnalytics.sort((a, b) => b.voteCount - a.voteCount);
 
     res.json({

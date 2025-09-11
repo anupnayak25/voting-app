@@ -227,7 +227,7 @@ export default function AdminSettings() {
         </div>
 
         {/* Voting Window Section */}
-        <div className="bg-gray-50 p-6 rounded-lg">
+        {/* <div className="bg-gray-50 p-6 rounded-lg">
           <div className="mb-4">
             <h3 className="text-md font-semibold text-gray-900">Voting Window</h3>
             <p className="text-sm text-gray-600 mt-1">
@@ -253,7 +253,7 @@ export default function AdminSettings() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Voting End (Optional)
-                </label>
+                </label> 
                 <input
                   type="datetime-local"
                   value={votingWindow.end}
@@ -281,7 +281,7 @@ export default function AdminSettings() {
               )}
             </button>
           </form>
-        </div>
+        </div>*/}
       </div>
     </div>
   );
