@@ -4,7 +4,7 @@ const Settings = require("../models/Settings");
 const jwt = require("jsonwebtoken");
 
 function generateOTP() {
-  return "000000"; //Math.floor(100000 + Math.random() * 900000).toString();
+  return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
 // Configurable OTP expiry (minutes); default extended from 10 to 30
@@ -30,21 +30,19 @@ exports.requestOTP = async (req, res) => {
   user.otpExpires = otpExpires;
   await user.save();
 
-  // try {
-  //   await transporter.sendMail({
-  //     from: process.env.EMAIL_USER,
-  //     to: email,
-  //     subject: "Your Voting OTP",
-  //     text: `Your OTP for voting is: ${otp}`,
-  //   });
-  //   console.log("[auth][requestOTP] 200 OTP sent", { email, expires: otpExpires.toISOString() });
-  //   res.json({ message: "OTP sent to email." });
-  // } catch (err) {
-  //   console.error("[mailer] sendMail error:", err);
-  //   res.status(500).json({ message: "Failed to send OTP email. Please try again." });
-  // }
-res.json({ message: "Dev testing" });
-
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Your Voting OTP",
+      text: `Your OTP for voting is: ${otp}`,
+    });
+    console.log("[auth][requestOTP] 200 OTP sent", { email, expires: otpExpires.toISOString() });
+    res.json({ message: "OTP sent to email." });
+  } catch (err) {
+    console.error("[mailer] sendMail error:", err);
+    res.status(500).json({ message: "Failed to send OTP email. Please try again." });
+  }
 };
 
 exports.verifyOTP = async (req, res) => {
