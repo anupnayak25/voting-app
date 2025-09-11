@@ -4,13 +4,8 @@
 	"installCommand": "npm install",
 	"buildCommand": "npm run build",
 	"outputDirectory": "Frontend/dist",
-	"rewrites": [
-		{
-			"source": "/api/(.*)",
-			"destination": "http://backend-alb-1925020059.ap-south-1.elb.amazonaws.com/api/$1"
-		}
-	],
 	"routes": [
+		{ "src": "/api/(.*)", "dest": "http://backend-alb-1925020059.ap-south-1.elb.amazonaws.com/api/$1" },
 		{ "handle": "filesystem" },
 		{ "src": "/.*", "dest": "/index.html" }
 	]
