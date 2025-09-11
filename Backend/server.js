@@ -6,7 +6,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
-const rateLimit = require("express-rate-limit");
 const app = express();
 app.use(fileUpload);
 // TEMP: Wide-open CORS (allow all origins). WARNING: Do NOT use in production.
@@ -26,15 +25,6 @@ app.use(
 
 app.use(express.json());
 
-// OTP rate limiter: max 5 requests per 10 minutes per IP
-const otpLimiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 5, // limit each IP to 5 OTP requests per windowMs
-  message: { message: "Too many OTP requests from this IP, please try again later." },
-  standardHeaders: true,
-  legacyHeaders: false,
-  skipSuccessfulRequests: false,
-});
 
 const PORT = process.env.PORT || 5000;
 const authRoutes = require("./routes/auth");
@@ -50,8 +40,6 @@ app.get("/", (req, res) => res.send("Voting App API is running"));
 app.get("/api/health", (req, res) => res.json({ status: "ok", timestamp: new Date().toISOString() }));
 
 app.use("/uploads", express.static("uploads"));
-// Apply OTP rate limiter only to OTP request endpoint
-app.use("/api/auth/request-otp", otpLimiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/vote", voteRoutes);
 app.use("/api/admin", adminRoutes);
