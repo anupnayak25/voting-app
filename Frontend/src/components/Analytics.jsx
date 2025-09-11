@@ -1,40 +1,109 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const Analytics = () => {
   const [analytics, setAnalytics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [positionDetails, setPositionDetails] = useState(null);
+  const isMounted = useRef(false);
 
   const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
+  // Simple sessionStorage cache to avoid refetch when switching tabs
+  const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+  const CACHE_KEY_ANALYTICS = 'analytics_cache_v1';
+  const CACHE_KEY_POSITION_PREFIX = 'position_details_';
+
+  const getCache = (key) => {
+    try {
+      const raw = sessionStorage.getItem(key);
+      if (!raw) return null;
+      const { ts, data } = JSON.parse(raw);
+      if (!ts || Date.now() - ts > CACHE_TTL_MS) return null;
+      return data;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const setCache = (key, data) => {
+    try {
+      sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), data }));
+    } catch (e) {
+      // ignore quota or serialization errors
+    }
+  };
+
   useEffect(() => {
-    fetchAnalytics();
+    isMounted.current = true;
+
+    // Try cache first for instant render
+    const cached = getCache(CACHE_KEY_ANALYTICS);
+    if (cached) {
+      setAnalytics(cached);
+      setLoading(false);
+    }
+
+    // Revalidate in background (silent if cache exists)
+    fetchAnalytics({ silent: !!cached });
+
+    return () => {
+      isMounted.current = false;
+    };
   }, []);
 
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = async ({ silent = false } = {}) => {
     try {
+      if (!silent) setLoading(true);
       const response = await fetch(`${API_BASE}/position/analytics`);
       const data = await response.json();
-      setAnalytics(data.analytics);
+      if (isMounted.current) {
+        setAnalytics(data.analytics || []);
+      }
+      setCache(CACHE_KEY_ANALYTICS, data.analytics || []);
     } catch (error) {
       console.error('Error fetching analytics:', error);
     } finally {
-      setLoading(false);
+      if (!silent && isMounted.current) setLoading(false);
     }
   };
 
   const fetchPositionDetails = async (positionName) => {
     try {
+      const cacheKey = `${CACHE_KEY_POSITION_PREFIX}${positionName}`;
+
+      // If cached, show immediately and revalidate silently
+      const cached = getCache(cacheKey);
+      if (cached) {
+        setPositionDetails(cached);
+        setSelectedPosition(positionName);
+        setLoading(false);
+        // Revalidate
+        try {
+          const response = await fetch(`${API_BASE}/position/analytics/${encodeURIComponent(positionName)}`);
+          const data = await response.json();
+          if (isMounted.current) {
+            setPositionDetails(data);
+          }
+          setCache(cacheKey, data);
+        } catch (e) {
+          // keep cached data on error
+        }
+        return;
+      }
+
       setLoading(true);
       const response = await fetch(`${API_BASE}/position/analytics/${encodeURIComponent(positionName)}`);
       const data = await response.json();
-      setPositionDetails(data);
-      setSelectedPosition(positionName);
+      if (isMounted.current) {
+        setPositionDetails(data);
+        setSelectedPosition(positionName);
+      }
+      setCache(cacheKey, data);
     } catch (error) {
       console.error('Error fetching position details:', error);
     } finally {
-      setLoading(false);
+      if (isMounted.current) setLoading(false);
     }
   };
 

@@ -11,6 +11,7 @@ export default function Vote({ userEmail, token, onVoted }) {
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [redirectSeconds, setRedirectSeconds] = useState(5);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,6 +30,7 @@ export default function Vote({ userEmail, token, onVoted }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
+    setLoading(true);
     const voteArr = Object.entries(votes).map(([position, candidateId]) => ({ position, candidateId }));
     try {
       const res = await fetch(`${API_URL}/submit`, {
@@ -45,6 +47,8 @@ export default function Vote({ userEmail, token, onVoted }) {
       }
     } catch (err) {
       setMessage('Network error.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,10 +91,10 @@ export default function Vote({ userEmail, token, onVoted }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 p-4">
-      <div className="max-w-4xl mx-auto">
+      <div className=" mx-auto">
         <div className="bg-white rounded-xl shadow-2xl overflow-hidden border border-primary-100">
           <div className="bg-gradient-to-r from-primary-800 to-primary-700 text-white p-6">
-            <h2 className="text-3xl font-bold text-center">Cast Your Vote</h2>
+            <h2 className="text-3xl text-white font-bold text-center">Cast Your Vote</h2>
             <p className="text-center mt-2 opacity-90">SAMCA Election 2025</p>
           </div>
           
@@ -123,7 +127,7 @@ export default function Vote({ userEmail, token, onVoted }) {
                             <img
                               src={c.photoUrl}
                               alt={c.name}
-                              className={`w-24 h-24 object-cover rounded-full border-4 mb-4 ${selected ? 'border-accent-500' : 'border-primary-200'}`}
+                              className={`w-52 h-52 object-cover rounded-full border-4 mb-4 ${selected ? 'border-accent-500' : 'border-primary-200'}`}
                               loading="lazy"
                             />
                           )}
@@ -141,9 +145,18 @@ export default function Vote({ userEmail, token, onVoted }) {
             <div className="mt-8 text-center">
               <button 
                 type="submit"
-                className="bg-gradient-to-r from-primary-800 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
+                className={`bg-gradient-to-r from-primary-800 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-200 transform hover:scale-105 shadow-lg ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                disabled={loading}
               >
-                Submit Vote
+                {loading ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Submitting...
+                  </span>
+                ) : 'Submit Vote'}
               </button>
             </div>
           </form>
