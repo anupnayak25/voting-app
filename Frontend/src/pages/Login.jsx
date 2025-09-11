@@ -35,7 +35,7 @@ export default function Login({ onLogin }) {
     e.preventDefault();
     setMessage("");
     try {
-      email = email.trim().toLowerCase();
+      setEmail( email.trim().toLowerCase());
       const res = await fetch(`${API_URL}/request-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
