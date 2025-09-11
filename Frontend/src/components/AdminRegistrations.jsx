@@ -78,10 +78,18 @@ export default function AdminRegistrations() {
     }
   };
 
+
+  // Group candidates by position
   const filteredCandidates = candidates.filter((candidate) => {
     if (filter === "all") return true;
     return candidate.status === filter;
   });
+
+  const candidatesByPosition = filteredCandidates.reduce((acc, candidate) => {
+    if (!acc[candidate.position]) acc[candidate.position] = [];
+    acc[candidate.position].push(candidate);
+    return acc;
+  }, {});
 
   const getStatusCounts = () => {
     const pending = candidates.filter((c) => c.status === "pending").length;
@@ -212,7 +220,7 @@ export default function AdminRegistrations() {
         </div>
       )}
 
-      {/* Candidates Table */}
+      {/* Candidates Table Grouped by Position */}
       <div className="bg-white shadow overflow-hidden sm:rounded-md">
         {filteredCandidates.length === 0 ? (
           <div className="text-center py-12">
@@ -234,58 +242,62 @@ export default function AdminRegistrations() {
             </p>
           </div>
         ) : (
-          <ul className="divide-y divide-gray-200">
-            {filteredCandidates.map((candidate) => (
-              <li key={candidate._id} className="px-6 py-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    {/* Photo */}
-                    <div className="flex-shrink-0">
-                      {candidate.photoUrl ? (
-                        <img
-                          className="h-12 w-12 rounded-lg object-cover border border-gray-200"
-                          src={candidate.photoUrl}
-                          alt={candidate.name}
-                        />
-                      ) : (
-                        <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
-                          <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                            />
-                          </svg>
+          <div>
+            {Object.keys(candidatesByPosition).sort().map((position) => (
+              <div key={position} className="mb-8">
+                <h3 className="text-lg font-bold text-accent-700 mb-4">{position}</h3>
+                <ul className="divide-y divide-gray-200">
+                  {candidatesByPosition[position].map((candidate) => (
+                    <li key={candidate._id} className="px-6 py-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          {/* Photo */}
+                          <div className="flex-shrink-0">
+                            {candidate.photoUrl ? (
+                              <img
+                                className="h-12 w-12 rounded-lg object-cover border border-gray-200"
+                                src={candidate.photoUrl}
+                                alt={candidate.name}
+                              />
+                            ) : (
+                              <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                                <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Candidate Info */}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center space-x-3">
+                              <p className="text-sm font-medium text-gray-900 truncate">{candidate.name}</p>
+                              <StatusBadge status={candidate.status} />
+                            </div>
+                            <div className="flex items-center space-x-2 mt-1">
+                              <p className="text-xs text-gray-500">USN: {candidate.usn}</p>
+                              <span className="text-gray-300">•</span>
+                              <p className="text-xs text-gray-500">{candidate.email}</p>
+                            </div>
+                          </div>
                         </div>
-                      )}
-                    </div>
 
-                    {/* Candidate Info */}
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center space-x-3">
-                        <p className="text-sm font-medium text-gray-900 truncate">{candidate.name}</p>
-                        <StatusBadge status={candidate.status} />
+                        {/* Actions */}
+                        <div className="flex items-center space-x-2">
+                          <ActionButtons candidate={candidate} />
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <p className="text-xs text-gray-500">USN: {candidate.usn}</p>
-                        <span className="text-gray-300">•</span>
-                        <p className="text-xs text-gray-500">{candidate.email}</p>
-                      </div>
-                      <p className="text-xs font-medium text-accent-600 mt-1">
-                        {candidate.position}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex items-center space-x-2">
-                    <ActionButtons candidate={candidate} />
-                  </div>
-                </div>
-              </li>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
     </div>
