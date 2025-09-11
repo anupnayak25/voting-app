@@ -11,8 +11,13 @@ exports.registerCandidate = async (req, res) => {
       return res.status(403).json({ message: 'Registration deadline has passed' });
     }
 
-    const { name, usn, email, position, gender } = req.body;
-    if (!name || !usn || !email || !position) return res.status(400).json({ message: 'All fields required' });
+    const { name, usn, email, position, phone } = req.body;
+    if (!name || !usn || !email || !position || !phone) return res.status(400).json({ message: 'All fields required' });
+    const usnNorm = usn.toLowerCase().trim();
+    const usnRegex = /^nu24mca(?:[1-9]|[1-9][0-9]|1[0-7][0-9]|180)$/;
+    if (!usnRegex.test(usnNorm)) {
+      return res.status(400).json({ message: 'Invalid USN format (expected nu24mca1 - nu24mca180)' });
+    }
 
     // Check if candidate already exists with same email or USN
     const existingCandidate = await Candidate.findOne({ $or: [{ email }, { usn }] });
@@ -31,7 +36,7 @@ exports.registerCandidate = async (req, res) => {
       photoUrl = uploadRes.secure_url;
     }
 
-    const candidate = await Candidate.create({ name, usn, email, position, gender, photoUrl });
+  const candidate = await Candidate.create({ name, usn: usnNorm, email, position, phone, photoUrl });
     res.json({ message: 'Candidate registered and pending approval', candidate });
   } catch (err) {
     console.error('Error registering candidate:', err.message);

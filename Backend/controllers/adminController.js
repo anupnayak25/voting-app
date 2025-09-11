@@ -69,16 +69,30 @@ exports.getVotingWindow = async (req, res) => {
 
 // Candidate management
 exports.addCandidate = async (req, res) => {
-  const { name, position, gender } = req.body;
-  if (!name || !position) return res.status(400).json({ message: "Name and position required" });
-  const candidate = await Candidate.create({ name, position, gender });
+  const { name, position, phone, usn, email } = req.body;
+  if (!name || !position || !phone || !usn || !email) return res.status(400).json({ message: "Name, position, phone, usn and email required" });
+  const usnNorm = usn.toLowerCase().trim();
+  const usnRegex = /^nu24mca(?:[1-9]|[1-9][0-9]|1[0-7][0-9]|180)$/;
+  if (!usnRegex.test(usnNorm)) return res.status(400).json({ message: 'Invalid USN format (expected nu24mca1 - nu24mca180)' });
+  const candidate = await Candidate.create({ name, position, phone, usn: usnNorm, email });
   res.json({ message: "Candidate added", candidate });
 };
 
 exports.editCandidate = async (req, res) => {
   const { id } = req.params;
-  const { name, position, gender } = req.body;
-  const candidate = await Candidate.findByIdAndUpdate(id, { name, position, gender }, { new: true });
+  const { name, position, phone, usn, email } = req.body;
+  const update = {};
+  if (name) update.name = name;
+  if (position) update.position = position;
+  if (phone) update.phone = phone;
+  if (email) update.email = email;
+  if (usn) {
+    const usnNorm = usn.toLowerCase().trim();
+    const usnRegex = /^nu24mca(?:[1-9]|[1-9][0-9]|1[0-7][0-9]|180)$/;
+    if (!usnRegex.test(usnNorm)) return res.status(400).json({ message: 'Invalid USN format (expected nu24mca1 - nu24mca180)' });
+    update.usn = usnNorm;
+  }
+  const candidate = await Candidate.findByIdAndUpdate(id, update, { new: true });
   if (!candidate) return res.status(404).json({ message: "Candidate not found" });
   res.json({ message: "Candidate updated", candidate });
 };

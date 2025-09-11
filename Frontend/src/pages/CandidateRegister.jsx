@@ -6,7 +6,9 @@ const API_URL = `${API_BASE}/candidate`;
 const POSITION_API = `${API_BASE}/position`;
 
 export default function CandidateRegister() {
-  const [form, setForm] = useState({ name: "", usn: "", email: "", position: "", gender: "" });
+  // Replaced gender with phone field (required)
+  const [form, setForm] = useState({ name: "", usn: "", email: "", position: "", phone: "" });
+  const [usnError, setUsnError] = useState("");
   const [photo, setPhoto] = useState(null);
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -38,22 +40,42 @@ export default function CandidateRegister() {
     }
   };
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const USN_REGEX = /^nu24mca(?:[1-9]|[1-9][0-9]|1[0-7][0-9]|180)$/i; // 1-180 inclusive
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const next = { ...form, [name]: value };
+    if (name === 'usn') {
+      // live normalize to lowercase without spaces
+      next.usn = value.toLowerCase().trim();
+      if (next.usn && !USN_REGEX.test(next.usn)) {
+        setUsnError('USN must start with nu24mca and end with a number 1-180 (e.g. nu24mca12)');
+      } else {
+        setUsnError('');
+      }
+    }
+    setForm(next);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.position) return setMessage("Please select a position");
+    if (!form.usn || !USN_REGEX.test(form.usn)) {
+      setUsnError('Enter a valid USN in range nu24mca1 - nu24mca180');
+      return setMessage('Please fix the highlighted errors.');
+    }
     setMessage("");
     setSubmitting(true);
     try {
       const fd = new FormData();
-      Object.entries(form).forEach(([k, v]) => v && fd.append(k, v));
+  Object.entries(form).forEach(([k, v]) => v && fd.append(k, v)); // includes phone now
       if (photo) fd.append("photo", photo);
       const res = await fetch(`${API_URL}/register`, { method: "POST", body: fd });
       const data = await res.json();
       if (res.ok) {
         setMessage("Registered successfully and pending approval.");
-        setForm({ name: "", usn: "", email: "", position: "", gender: "" });
+  setForm({ name: "", usn: "", email: "", position: "", phone: "" });
+  setUsnError('');
         setPhoto(null);
       } else setMessage(data.message || "Error registering candidate.");
     } catch (err) {
@@ -81,7 +103,16 @@ export default function CandidateRegister() {
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wide text-text-primary uppercase">USN</label>
-              <input name="usn" value={form.usn} onChange={handleChange} required className="input-field mt-1" />
+              <input
+                name="usn"
+                value={form.usn}
+                onChange={handleChange}
+                required
+                className={`input-field mt-1 ${usnError ? 'border-red-500 focus:ring-red-500' : ''}`}
+                placeholder="nu24mca12"
+                aria-invalid={!!usnError}
+              />
+              {usnError && <p className="mt-1 text-xs text-red-600">{usnError}</p>}
             </div>
           </div>
           <div className="grid sm:grid-cols-2 gap-5">
@@ -115,15 +146,18 @@ export default function CandidateRegister() {
           </div>
           <div className="grid sm:grid-cols-2 gap-5">
             <div>
-              <label className="block text-xs font-semibold tracking-wide text-text-primary uppercase">
-                Gender (Optional)
-              </label>
-              <select name="gender" value={form.gender} onChange={handleChange} className="input-field mt-1 bg-white">
-                <option value="">Not Specified</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
+              <label className="block text-xs font-semibold tracking-wide text-text-primary uppercase">Phone Number</label>
+              <input
+                name="phone"
+                type="tel"
+                value={form.phone}
+                onChange={handleChange}
+                required
+                pattern="[0-9]{10}"
+                title="Enter a 10 digit phone number"
+                className="input-field mt-1"
+                placeholder="10 digit number"
+              />
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wide text-text-primary uppercase">Photo</label>

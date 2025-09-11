@@ -274,7 +274,6 @@ export default function AdminRegistrations() {
                       </div>
                       <p className="text-xs font-medium text-accent-600 mt-1">
                         {candidate.position}
-                        {candidate.gender && <span className="text-gray-400 ml-1">({candidate.gender})</span>}
                       </p>
                     </div>
                   </div>

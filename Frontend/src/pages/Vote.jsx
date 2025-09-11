@@ -151,7 +151,7 @@ export default function Vote({ userEmail, token, onVoted }) {
                             />
                           )}
                           <span className="text-text-primary font-semibold text-lg text-center">
-                            {c.name} {c.gender ? `(${c.gender})` : ''}
+                            {c.name}
                           </span>
                         </label>
                       );

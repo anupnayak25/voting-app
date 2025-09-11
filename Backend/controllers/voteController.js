@@ -15,7 +15,6 @@ exports.getPositionsAndCandidates = async (req, res) => {
         _id: c._id,
         name: c.name,
         position: c.position,
-        gender: c.gender,
         photoUrl: c.photoUrl,
       })),
     });
