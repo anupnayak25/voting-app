@@ -217,7 +217,7 @@ const Analytics = () => {
         <h1 className="text-3xl font-bold text-gray-800 mb-8">Voting Analytics Overview</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {analytics.map((positionData, index) => {
+          {[...analytics].sort((a, b) => (a.order || 999) - (b.order || 999)).map((positionData, index) => {
             const maxVotes = Math.max(...positionData.candidateVotes.map(c => c.voteCount), 1);
             
             return (

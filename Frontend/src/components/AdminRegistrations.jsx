@@ -243,11 +243,18 @@ export default function AdminRegistrations() {
           </div>
         ) : (
           <div>
-            {Object.keys(candidatesByPosition).sort().map((position) => (
-              <div key={position} className="mb-8">
-                <h3 className="text-lg font-bold text-accent-700 mb-4">{position}</h3>
-                <ul className="divide-y divide-gray-200">
-                  {candidatesByPosition[position].map((candidate) => (
+            {/* Sort positions by order if available */}
+            {Object.keys(candidatesByPosition)
+              .sort((a, b) => {
+                const ca = candidates.find(c => c.position === a);
+                const cb = candidates.find(c => c.position === b);
+                return (ca?.order || 999) - (cb?.order || 999);
+              })
+              .map((position) => (
+                <div key={position} className="mb-8">
+                  <h3 className="text-lg font-bold text-accent-700 mb-4">{position}</h3>
+                  <ul className="divide-y divide-gray-200">
+                    {candidatesByPosition[position].map((candidate) => (
                     <li key={candidate._id} className="px-6 py-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
