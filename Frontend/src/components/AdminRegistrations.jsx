@@ -246,9 +246,10 @@ export default function AdminRegistrations() {
             {/* Sort positions by order if available */}
             {Object.keys(candidatesByPosition)
               .sort((a, b) => {
-                const ca = candidates.find(c => c.position === a);
-                const cb = candidates.find(c => c.position === b);
-                return (ca?.order || 999) - (cb?.order || 999);
+                // Find the minimum order for each position group
+                const caOrder = Math.min(...(candidatesByPosition[a].map(c => c.order || 999)));
+                const cbOrder = Math.min(...(candidatesByPosition[b].map(c => c.order || 999)));
+                return caOrder - cbOrder;
               })
               .map((position) => (
                 <div key={position} className="mb-8">
