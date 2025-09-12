@@ -109,7 +109,7 @@ export default function CandidateRegister() {
                 onChange={handleChange}
                 required
                 className={`input-field mt-1 ${usnError ? 'border-red-500 focus:ring-red-500' : ''}`}
-                placeholder="nu24mca12"
+                placeholder="nu24mca***"
                 aria-invalid={!!usnError}
               />
               {usnError && <p className="mt-1 text-xs text-red-600">{usnError}</p>}
