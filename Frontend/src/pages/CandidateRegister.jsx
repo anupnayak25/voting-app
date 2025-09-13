@@ -137,7 +137,7 @@ export default function CandidateRegister() {
                 className="input-field mt-1 bg-white">
                 <option value="">Select Position</option>
                 {positions.map((position) => (
-                  <option key={position.name} value={position.name}>
+                  <option key={position.name} value={position.displayName}>
                     {position.displayName}
                   </option>
                 ))}

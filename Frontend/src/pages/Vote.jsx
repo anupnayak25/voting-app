@@ -19,6 +19,7 @@ export default function Vote({ userEmail, token, onVoted }) {
     fetch(`${API_URL}/positions-candidates`)
       .then(res => res.json())
       .then(data => {
+        console.log(data);
         setPositions(data.positions);
         setCandidates(data.candidates);
       });
@@ -33,7 +34,7 @@ export default function Vote({ userEmail, token, onVoted }) {
       setValidationErrors(next);
     }
   };
-
+  console.log(positions);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
@@ -45,6 +46,8 @@ export default function Vote({ userEmail, token, onVoted }) {
       setMessage('Please select a candidate for all positions.');
       return; // Do not proceed
     }
+
+  
 
     setLoading(true);
     const voteArr = Object.entries(votes).map(([position, candidateId]) => ({ position, candidateId }));

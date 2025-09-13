@@ -10,7 +10,7 @@ exports.getPositionsAndCandidates = async (req, res) => {
     const candidates = await Candidate.find({ status: "approved" });
 
     res.json({
-      positions: positions.map((p) => p.name),
+      positions: positions.map((p) => p.displayName),
       candidates: candidates.map((c) => ({
         _id: c._id,
         name: c.name,
