@@ -291,6 +291,8 @@ export default function AdminRegistrations() {
                               <p className="text-xs text-gray-500">USN: {candidate.usn}</p>
                               <span className="text-gray-300">•</span>
                               <p className="text-xs text-gray-500">{candidate.email}</p>
+                              <span className="text-gray-300">•</span>
+                              <p className="text-xs text-gray-500">Phone: {candidate.phone}</p>
                             </div>
                           </div>
                         </div>

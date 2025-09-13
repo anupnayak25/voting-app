@@ -165,6 +165,7 @@ export default function CandidateRegister() {
                 type="file"
                 accept="image/*"
                 onChange={(e) => setPhoto(e.target.files?.[0] || null)}
+                required
                 className="mt-1 w-full text-sm text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-50 file:text-primary-800 hover:file:bg-primary-100"
               />
             </div>
