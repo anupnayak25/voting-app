@@ -93,7 +93,7 @@ export default function CandidateRegister() {
           Candidate Registration
         </h2>
         <p className="text-sm text-text-secondary text-center mb-6">
-          Fill in accurate details. Each position can only be contested once per candidate.
+          Fill in accurate details. Each candidate can only be contested for one position.
         </p>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid sm:grid-cols-2 gap-5">
