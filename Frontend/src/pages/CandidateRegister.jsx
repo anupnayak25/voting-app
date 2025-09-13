@@ -40,7 +40,7 @@ export default function CandidateRegister() {
     }
   };
 
-  const USN_REGEX = /^nu24mca(?:[1-9]|[1-9][0-9]|1[0-7][0-9]|180)$/i; // 1-180 inclusive
+  const USN_REGEX = /^nu25mca(?:[1-9]|[1-9][0-9]|1[0-7][0-9]|180)$/i; // 1-180 inclusive
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,7 +49,7 @@ export default function CandidateRegister() {
       // live normalize to lowercase without spaces
       next.usn = value.toLowerCase().trim();
       if (next.usn && !USN_REGEX.test(next.usn)) {
-        setUsnError('USN must start with nu24mca and end with a number 1-180 (e.g. nu24mca12)');
+        setUsnError('USN must start with nu25mca and end with a number 1-180 (e.g. nu25mca12)');
       } else {
         setUsnError('');
       }
@@ -61,7 +61,7 @@ export default function CandidateRegister() {
     e.preventDefault();
     if (!form.position) return setMessage("Please select a position");
     if (!form.usn || !USN_REGEX.test(form.usn)) {
-      setUsnError('Enter a valid USN in range nu24mca1 - nu24mca180');
+      setUsnError('Enter a valid USN in range nu25mca1 - nu25mca180');
       return setMessage('Please fix the highlighted errors.');
     }
     setMessage("");
@@ -109,7 +109,7 @@ export default function CandidateRegister() {
                 onChange={handleChange}
                 required
                 className={`input-field mt-1 ${usnError ? 'border-red-500 focus:ring-red-500' : ''}`}
-                placeholder="nu24mca***"
+                placeholder="nu25mca***"
                 aria-invalid={!!usnError}
               />
               {usnError && <p className="mt-1 text-xs text-red-600">{usnError}</p>}

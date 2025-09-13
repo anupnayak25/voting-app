@@ -14,9 +14,9 @@ exports.registerCandidate = async (req, res) => {
     const { name, usn, email, position, phone } = req.body;
     if (!name || !usn || !email || !position || !phone) return res.status(400).json({ message: 'All fields required' });
     const usnNorm = usn.toLowerCase().trim();
-    const usnRegex = /^nu24mca(?:[1-9]|[1-9][0-9]|1[0-7][0-9]|180)$/;
+    const usnRegex = /^nu25mca(?:[1-9]|[1-9][0-9]|1[0-7][0-9]|180)$/;
     if (!usnRegex.test(usnNorm)) {
-      return res.status(400).json({ message: 'Invalid USN format (expected nu24mca1 - nu24mca180)' });
+      return res.status(400).json({ message: 'Invalid USN format (expected nu25mca1 - nu25mca180)' });
     }
 
     // Check if candidate already exists with same email or USN
