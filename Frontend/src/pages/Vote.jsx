@@ -133,8 +133,8 @@ export default function Vote({ userEmail, token, onVoted }) {
                       return (
                         <label
                           key={c._id}
-                          className={`flex flex-col items-center p-6 bg-white rounded-2xl border-2 transition-all cursor-pointer shadow-sm 
-                            ${selected ? 'border-accent-500 ring-2 ring-accent-300 shadow-lg' : 'border-primary-200 hover:border-accent-400'}`}
+                          className={`flex flex-col items-center p-6  rounded-2xl border-2 transition-all cursor-pointer shadow-sm duration-200 hover:shadow-md
+                            ${selected ? 'border-accent-500 bg-accent-200/70 ring-2 ring-accent-300 shadow-lg' : 'border-primary-200 bg-white hover:border-accent-400'}`}
                         >
                           <input
                             type="radio"

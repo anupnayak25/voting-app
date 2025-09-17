@@ -49,11 +49,11 @@ export default function Login({ onLogin }) {
   };
 
   const handleRequestOtp = async (e) => {
-    // if (!validateEmail(email)) {
-    //   setEmailValid(false);
-    //   e.preventDefault();
-    //   return;
-    // }
+    if (!validateEmail(email)) {
+      setEmailValid(false);
+      e.preventDefault();
+      return;
+    }
     setLoading(true);
     e.preventDefault();
     setMessage("");
