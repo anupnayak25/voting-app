@@ -84,14 +84,16 @@ exports.getVotingAnalytics = async (req, res) => {
     const analytics = [];
 
     for (const position of positions) {
-      // Get all approved candidates for this position
-      const candidates = await Candidate.find({ position: position.displayName, status: 'approved' });
+      // Support both internal name and displayName for backward compatibility
+      const positionNames = [position.name, position.displayName];
+      // Get all approved candidates for this position (by either name)
+      const candidates = await Candidate.find({ position: { $in: positionNames }, status: 'approved' });
       const candidateIds = candidates.map(c => c._id);
 
-      // Aggregate vote counts for all candidates in this position in one query
+      // Aggregate vote counts for all candidates in this position in one query (by either name)
       const voteCounts = await Vote.aggregate([
         { $unwind: "$votes" },
-        { $match: { "votes.position": position.displayName, "votes.candidate": { $in: candidateIds } } },
+        { $match: { "votes.position": { $in: positionNames }, "votes.candidate": { $in: candidateIds } } },
         { $group: { _id: "$votes.candidate", count: { $sum: 1 } } }
       ]);
 
