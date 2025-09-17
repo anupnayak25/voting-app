@@ -55,22 +55,28 @@ const Analytics = () => {
   const fetchAnalytics = async ({ silent = false } = {}) => {
     try {
       if (!silent) setLoading(true);
+      console.log('[Analytics] Fetching:', `${API_BASE}/position/analytics`);
       const response = await fetch(`${API_BASE}/position/analytics`);
       const data = await response.json();
+      console.log('[Analytics] API response:', data);
       if (isMounted.current) {
         setAnalytics(data.analytics || []);
+        console.log('[Analytics] setAnalytics:', data.analytics || []);
       }
       setCache(CACHE_KEY_ANALYTICS, data.analytics || []);
+      console.log('[Analytics] Cached analytics:', data.analytics || []);
     } catch (error) {
       console.error('Error fetching analytics:', error);
     } finally {
       if (!silent && isMounted.current) setLoading(false);
+      console.log('[Analytics] Loading state:', loading);
     }
   };
 
   const fetchPositionDetails = async (positionName) => {
     try {
       const cacheKey = `${CACHE_KEY_POSITION_PREFIX}${positionName}`;
+      console.log('[Analytics] Fetching position details for:', positionName);
 
       // If cached, show immediately and revalidate silently
       const cached = getCache(cacheKey);
@@ -78,16 +84,20 @@ const Analytics = () => {
         setPositionDetails(cached);
         setSelectedPosition(positionName);
         setLoading(false);
+        console.log('[Analytics] Using cached position details:', cached);
         // Revalidate
         try {
           const response = await fetch(`${API_BASE}/position/analytics/${encodeURIComponent(positionName)}`);
           const data = await response.json();
+          console.log('[Analytics] Position details API response:', data);
           if (isMounted.current) {
             setPositionDetails(data);
+            console.log('[Analytics] setPositionDetails:', data);
           }
           setCache(cacheKey, data);
+          console.log('[Analytics] Cached position details:', data);
         } catch (e) {
-          // keep cached data on error
+          console.error('[Analytics] Error fetching position details:', e);
         }
         return;
       }
@@ -95,15 +105,19 @@ const Analytics = () => {
       setLoading(true);
       const response = await fetch(`${API_BASE}/position/analytics/${encodeURIComponent(positionName)}`);
       const data = await response.json();
+      console.log('[Analytics] Position details API response:', data);
       if (isMounted.current) {
         setPositionDetails(data);
         setSelectedPosition(positionName);
+        console.log('[Analytics] setPositionDetails:', data);
       }
       setCache(cacheKey, data);
+      console.log('[Analytics] Cached position details:', data);
     } catch (error) {
       console.error('Error fetching position details:', error);
     } finally {
       if (isMounted.current) setLoading(false);
+      console.log('[Analytics] Loading state:', loading);
     }
   };
 

@@ -84,14 +84,16 @@ exports.getVotingAnalytics = async (req, res) => {
     const analytics = [];
 
     for (const position of positions) {
-      // Get all approved candidates for this position
-      const candidates = await Candidate.find({ position: position.name, status: 'approved' });
+      // Support both internal name and displayName for backward compatibility
+      const positionNames = [position.name, position.displayName];
+      // Get all approved candidates for this position (by either name)
+      const candidates = await Candidate.find({ position: { $in: positionNames }, status: 'approved' });
       const candidateIds = candidates.map(c => c._id);
 
-      // Aggregate vote counts for all candidates in this position in one query
+      // Aggregate vote counts for all candidates in this position in one query (by either name)
       const voteCounts = await Vote.aggregate([
         { $unwind: "$votes" },
-        { $match: { "votes.position": position.name, "votes.candidate": { $in: candidateIds } } },
+        { $match: { "votes.position": { $in: positionNames }, "votes.candidate": { $in: candidateIds } } },
         { $group: { _id: "$votes.candidate", count: { $sum: 1 } } }
       ]);
 
@@ -127,19 +129,22 @@ exports.getVotingAnalytics = async (req, res) => {
 exports.getPositionAnalytics = async (req, res) => {
   try {
     const { positionName } = req.params;
-    const position = await Position.findOne({ name: positionName, isActive: true });
+    // Find position by internal name or displayName
+    const position = await Position.findOne({ $or: [ { name: positionName }, { displayName: positionName } ], isActive: true });
     if (!position) {
       return res.status(404).json({ message: 'Position not found' });
     }
 
-    // Get all approved candidates for this position
-    const candidates = await Candidate.find({ position: positionName, status: 'approved' });
+    // Support both internal name and displayName for backward compatibility
+    const positionNames = [position.name, position.displayName];
+    // Get all approved candidates for this position (by either name)
+    const candidates = await Candidate.find({ position: { $in: positionNames }, status: 'approved' });
     const candidateIds = candidates.map(c => c._id);
 
-    // Aggregate vote counts and voter details for all candidates in this position
+    // Aggregate vote counts and voter details for all candidates in this position (by either name)
     const voteAgg = await Vote.aggregate([
       { $unwind: "$votes" },
-      { $match: { "votes.position": positionName, "votes.candidate": { $in: candidateIds } } },
+      { $match: { "votes.position": { $in: positionNames }, "votes.candidate": { $in: candidateIds } } },
       { $group: {
         _id: "$votes.candidate",
         count: { $sum: 1 },
