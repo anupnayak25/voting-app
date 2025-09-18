@@ -10,6 +10,7 @@ import AdminRegistrations from "./components/AdminRegistrations";
 import Analytics from "./components/Analytics";
 import AdminVotedUsers from "./components/AdminVotedUsers";
 import logo from "./assets/samca_logo.png";
+import ViewCandidates from "./pages/ViewCandidates";
 
 function App() {
   const [userEmail, setUserEmail] = useState(null);
@@ -56,6 +57,7 @@ function App() {
         <header className="bg-white/95 backdrop-blur-md shadow-sm border-b border-primary-100 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
+              
               <Link to="/" className="flex items-center space-x-2">
                 <div className="w-8 h-8  rounded-full flex items-center justify-center">
                   <img src={logo} className=" rounded-full" alt="logo" />
@@ -64,6 +66,12 @@ function App() {
               </Link>
 
               <nav className="hidden md:flex items-center space-x-8">
+                <Link
+                to="/view-candidates"
+                className="block text-text-secondary hover:text-primary-800 font-medium transition-colors py-2 px-2 rounded-lg hover:bg-primary-50"
+                onClick={() => setIsMobileMenuOpen(false)}>
+               View Candidates
+              </Link>
                 <Link
                   to="/register"
                   className="text-text-secondary hover:text-primary-800 font-medium transition-colors">
@@ -103,6 +111,12 @@ function App() {
           <div className="fixed inset-0 z-40 bg-black bg-opacity-50" onClick={() => setIsMobileMenuOpen(false)}></div>
           <div className="fixed top-16 left-0 right-0 z-50 bg-white shadow-lg border-b border-primary-100">
             <nav className="px-4 py-4 space-y-3">
+               <Link
+                to="/view-candidates"
+                className="block text-text-secondary hover:text-primary-800 font-medium transition-colors py-2 px-2 rounded-lg hover:bg-primary-50"
+                onClick={() => setIsMobileMenuOpen(false)}>
+               View Candidates
+              </Link>
               <Link
                 to="/register"
                 className="block text-text-secondary hover:text-primary-800 font-medium transition-colors py-2 px-2 rounded-lg hover:bg-primary-50"
@@ -135,6 +149,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<CandidateRegister />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          <Route path="/view-candidates" element={<ViewCandidates />} />
           <Route
             path="/vote"
             element={
@@ -167,6 +182,7 @@ function App() {
             <Route path="registrations" element={<AdminRegistrations />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="voted-users" element={<AdminVotedUsers />} />
+            
           </Route>
 
           <Route path="*" element={<NotFound />} />
