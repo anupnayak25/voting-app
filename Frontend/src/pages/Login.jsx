@@ -39,13 +39,15 @@ export default function Login({ onLogin }) {
 
   // Allowed pattern: nu25mca<number> or nnm25mca<number> where number = 1..180 (leading zeros allowed) @nmamit.in
   // Special exception: nnm24mc014@nmamit.in (demo user)
-  const EXCEPTION_EMAIL = "nnm24mc014@nmamit.in";
-  const emailRegex = /^(?:nu25mca|nnm25mca)0*(?:1?[0-9]?[0-9]|1[0-7][0-9]|180)@nmamit\.in$/i; // covers 1-180
+  // Special exception: list of demo users
+  const EXCEPTION_EMAILS = ["nnm24mc014@nmamit.in","nnm24mc015@nmamit.in","nnm24mc077@nmamit.in",
+    "nnm24mc101@nmamit.in","nnm24mc134@nmamit.in","nnm24mc146@nmamit.in","nnm24mc122@nmamit.in","nnm24mc104@nmamit.in","nnm24mc118@nmamit.in"];
+  const emailRegex = /^(?:nu25mca|nnm25mca)0*(?:1?[0-9]?[0-9]|1[0-8][0-9]|190)@nmamit\.in$/i; // covers 1-190
 
   const validateEmail = (val) => {
-    if (!val) return true; // don't show error on empty
-    if (val.toLowerCase() === EXCEPTION_EMAIL) return true;
-    return emailRegex.test(val.trim().toLowerCase());
+  if (!val) return true; // don't show error on empty
+  if (EXCEPTION_EMAILS.includes(val.trim().toLowerCase())) return true;
+  return emailRegex.test(val.trim().toLowerCase());
   };
 
   const handleRequestOtp = async (e) => {
